@@ -11,7 +11,7 @@
 *Select Language: English | 中文*
 
 <details open>
-<summary><h2>🇬🇧 English Version (Click to Expand)</h2></summary>
+<summary><strong>🇬🇧 English Version (Click to Expand)</strong></summary>
 
 A unified, modular, and hardware-aware simulation framework and neuromorphic computing evaluation platform for **Organic Optoelectronic and Memristive Devices**. 
 
@@ -154,7 +154,7 @@ best_params, best_accuracy = tuner.tune()
 ---
 
 <details>
-<summary><h2>🇨🇳 中文版 (点击展开)</h2></summary>
+<summary><strong>🇨🇳 中文版 (点击展开)</strong></summary>
 
 针对**有机光电和忆阻器件**的高硬件感知度、模块化存算一体仿真与神经形态计算评估平台。
 
