@@ -111,7 +111,10 @@ o-cimkit run cifar10_vision --epochs 10
 # Run generative VAE application
 o-cimkit run generative_aigc --epochs 25
 
-# Run top-journal comparative benchmark and publish reports to reports/
+# Run Nano-GPT Large Language Model on Organic Memory
+o-cimkit run cim_nano_gpt
+
+# Run top-journal comparative benchmark and publish reports
 o-cimkit benchmark --apps cifar10_vision,generative_aigc --epochs 10
 ```
 
@@ -194,6 +197,9 @@ o-cimkit run cifar10_vision --epochs 10
 
 # 运行变分自编码器 AIGC 图像生成应用
 o-cimkit run generative_aigc --epochs 25
+
+# 运行最前沿的 Nano-GPT 生成式大模型 (LLM on CIM)
+o-cimkit run cim_nano_gpt
 
 # 一键运行顶刊标准硬件感知对比跑分并输出报告
 o-cimkit benchmark --apps cifar10_vision,generative_aigc --epochs 10

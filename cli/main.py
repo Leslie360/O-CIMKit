@@ -28,7 +28,7 @@ def main():
              "fingerprint_rec, cifar10_vision, optoelectronic_vision, neuromorphic_stdp, "
              "neuromorphic_pid, tactile_eskin, neuromorphic_grasp, seizure_detection, "
              "biohybrid_spiking, face_rec, dvs_gesture, ppg_heartrate, neuromorphic_rl, text_sentiment, "
-             "olfactory_enose, eeg_motor_imagery, neuromorphic_kws"
+             "olfactory_enose, eeg_motor_imagery, neuromorphic_kws, cim_nano_gpt"
     )
     
     # Subcommand: benchmark
