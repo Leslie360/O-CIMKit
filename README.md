@@ -59,26 +59,26 @@ CIM_application_project/
 ├── main.py                       # 10. Root-level unified CLI entry point
 │
 └── applications/                 # 11. Neural Network & Reservoir Applications
-    ├── [ecg_cardio](file:///home/qiaosir/projects_1/CIM_application_project/applications/ecg_cardio/README.md) -> MIT-BIH classification (QAT MLP) | 97.91% ± 0.45%
-    ├── [fatigue_eeg](file:///home/qiaosir/projects_1/CIM_application_project/applications/fatigue_eeg/README.md) -> Sleep-EDF stage detection (Multi-Scale RC + QAT MLP) | 71.95% ± 2.70%
-    ├── [bearing_fault](file:///home/qiaosir/projects_1/CIM_application_project/applications/bearing_fault/README.md) -> CWRU fault detection (QAT MLP) | 99.80% ± 0.25%
-    ├── [chaotic_lorenz](file:///home/qiaosir/projects_1/CIM_application_project/applications/chaotic_lorenz/README.md) -> Lorenz attractor forecasting (Volatile RC) | NRMSE 0.0214%
-    ├── [digit_rec](file:///home/qiaosir/projects_1/CIM_application_project/applications/digit_rec/README.md) -> Sequential MNIST digits recognition (Volatile RC) | 95.00%
-    ├── [speech_emotion](file:///home/qiaosir/projects_1/CIM_application_project/applications/speech_emotion/README.md) -> RAVDESS speech emotion classification (QAT MLP) | 83.77% ± 4.01%
-    ├── [embodied_ai](file:///home/qiaosir/projects_1/CIM_application_project/applications/embodied_ai/README.md) -> Tactile multimodality materials classification (RC) | ~99.00%
-    ├── [edge_llm](file:///home/qiaosir/projects_1/CIM_application_project/applications/edge_llm/README.md) -> Edge-LLM Sentinel anomaly interceptor (RF) | ~94% Intercept
-    ├── [physical_attention](file:///home/qiaosir/projects_1/CIM_application_project/applications/physical_attention/README.md) -> Physical KV-Cache attention mechanism (Synergy) | ~95.00%
-    ├── [fingerprint_rec](file:///home/qiaosir/projects_1/CIM_application_project/applications/fingerprint_rec/README.md) -> Fingerprint recognition (NIST + ResNet-18) | 92.19%
-    ├── [cifar10_vision](file:///home/qiaosir/projects_1/CIM_application_project/applications/cifar10_vision/README.md) -> Bionic vision (CIFAR-10 + ResNet-18) | 90.15%
-    ├── [face_rec](file:///home/qiaosir/projects_1/CIM_application_project/applications/face_rec/README.md) -> Yale Faces recognition (ResNet-18 + QAT Head) | 96.67%
-    ├── [optoelectronic_vision](file:///home/qiaosir/projects_1/CIM_application_project/applications/optoelectronic_vision/README.md) -> Bionic Sensor-CIM integrated vision (OECT + ResNet-18) | 91.86%
-    ├── [neuromorphic_stdp](file:///home/qiaosir/projects_1/CIM_application_project/applications/neuromorphic_stdp/README.md) -> Unsupervised SNN with STDP learning rule (SNN) | 22.78%
-    ├── [neuromorphic_pid](file:///home/qiaosir/projects_1/CIM_application_project/applications/neuromorphic_pid/README.md) -> Adaptive PID controller under memristor noise | 55.80%
-    ├── [tactile_eskin](file:///home/qiaosir/projects_1/CIM_application_project/applications/tactile_eskin/README.md) -> E-skin multi-class tactile sensor classification (CNN) | 100.00%
-    ├── [neuromorphic_grasp](file:///home/qiaosir/projects_1/CIM_application_project/applications/neuromorphic_grasp/README.md) -> Robotic hand slippage reduction control | 98.24%
-    ├── [seizure_detection](file:///home/qiaosir/projects_1/CIM_application_project/applications/seizure_detection/README.md) -> Seizure detection from multichannel EEG | 100.00%
-    ├── [generative_aigc](file:///home/qiaosir/projects_1/CIM_application_project/applications/generative_aigc/README.md) -> ConvVAE Digit Image Generation & Reconstruction | MSE: 4.85e-3
-    └── [biohybrid_spiking](file:///home/qiaosir/projects_1/CIM_application_project/applications/biohybrid_spiking/README.md) -> Spiking coordination in biohybrid networks | 100.00%
+    ├── [ecg_cardio](applications/ecg_cardio) -> MIT-BIH classification (QAT MLP) | 97.91% ± 0.45%
+    ├── [fatigue_eeg](applications/fatigue_eeg) -> Sleep-EDF stage detection (Multi-Scale RC + QAT MLP) | 71.95% ± 2.70%
+    ├── [bearing_fault](applications/bearing_fault) -> CWRU fault detection (QAT MLP) | 99.80% ± 0.25%
+    ├── [chaotic_lorenz](applications/chaotic_lorenz) -> Lorenz attractor forecasting (Volatile RC) | NRMSE 0.0214%
+    ├── [digit_rec](applications/digit_rec) -> Sequential MNIST digits recognition (Volatile RC) | 95.00%
+    ├── [speech_emotion](applications/speech_emotion) -> RAVDESS speech emotion classification (QAT MLP) | 83.77% ± 4.01%
+    ├── [embodied_ai](applications/embodied_ai) -> Tactile multimodality materials classification (RC) | ~99.00%
+    ├── [edge_llm](applications/edge_llm) -> Edge-LLM Sentinel anomaly interceptor (RF) | ~94% Intercept
+    ├── [physical_attention](applications/physical_attention) -> Physical KV-Cache attention mechanism (Synergy) | ~95.00%
+    ├── [fingerprint_rec](applications/fingerprint_rec) -> Fingerprint recognition (NIST + ResNet-18) | 92.19%
+    ├── [cifar10_vision](applications/cifar10_vision) -> Bionic vision (CIFAR-10 + ResNet-18) | 90.15%
+    ├── [face_rec](applications/face_rec) -> Yale Faces recognition (ResNet-18 + QAT Head) | 96.67%
+    ├── [optoelectronic_vision](applications/optoelectronic_vision) -> Bionic Sensor-CIM integrated vision (OECT + ResNet-18) | 91.86%
+    ├── [neuromorphic_stdp](applications/neuromorphic_stdp) -> Unsupervised SNN with STDP learning rule (SNN) | 22.78%
+    ├── [neuromorphic_pid](applications/neuromorphic_pid) -> Adaptive PID controller under memristor noise | 55.80%
+    ├── [tactile_eskin](applications/tactile_eskin) -> E-skin multi-class tactile sensor classification (CNN) | 100.00%
+    ├── [neuromorphic_grasp](applications/neuromorphic_grasp) -> Robotic hand slippage reduction control | 98.24%
+    ├── [seizure_detection](applications/seizure_detection) -> Seizure detection from multichannel EEG | 100.00%
+    ├── [generative_aigc](applications/generative_aigc) -> ConvVAE Digit Image Generation & Reconstruction | MSE: 4.85e-3
+    └── [biohybrid_spiking](applications/biohybrid_spiking) -> Spiking coordination in biohybrid networks | 100.00%
 ```
 
 ### 📦 Installation
