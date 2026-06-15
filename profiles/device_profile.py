@@ -1,13 +1,22 @@
 import os
 import json
 import numpy as np
+from typing import Optional, Dict, Any, List, Union
 
 class DeviceProfile:
     """
     Unified representation of an Organic Device (memristor, transistor, OFET, OECT, etc.)
     defining its physical properties, non-linearities, quantization states, and noise limits.
     """
-    def __init__(self, name, device_type="memristor", **kwargs):
+    def __init__(self, name: str, device_type: str = "memristor", **kwargs: Any) -> None:
+        """
+        Initializes a DeviceProfile.
+        
+        Args:
+            name (str): Unique name identifier for the device profile.
+            device_type (str): Type of device, e.g. "memristor", "oect". Default: "memristor".
+            **kwargs: Additional dynamic and fitting parameters.
+        """
         self.device_name = name
         self.device_type = device_type
         
@@ -34,7 +43,7 @@ class DeviceProfile:
             self.leaking_rate_volatile = float(1.0 - np.exp(-1.0 / self.tau_volatile))
 
     @classmethod
-    def from_json(cls, json_path):
+    def from_json(cls, json_path: str) -> "DeviceProfile":
         """Load a device profile from a JSON configuration file."""
         with open(json_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
@@ -51,7 +60,7 @@ class DeviceProfile:
             **kwargs
         )
 
-    def to_json(self, json_path):
+    def to_json(self, json_path: str) -> None:
         """Save device profile configuration to JSON file."""
         data = {
             "device_name": self.device_name,
@@ -76,18 +85,39 @@ class DeviceProfile:
         with open(json_path, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=4, ensure_ascii=False)
 
-    def map_to_physical(self, w_math):
-        """Map mathematical weights [-1, 1] to physical conductance [G_min, G_max]."""
+    def map_to_physical(self, w_math: Union[float, np.ndarray, Any]) -> Union[float, np.ndarray, Any]:
+        """
+        Map mathematical weights [-1, 1] to physical conductance [G_min, G_max].
+        
+        Args:
+            w_math (Union[float, np.ndarray, Any]): Mathematical weights.
+            
+        Returns:
+            Union[float, np.ndarray, Any]: Physical conductances.
+        """
         w_norm = (w_math + 1.0) / 2.0
         w_phys = w_norm * (self.conductance_max - self.conductance_min) + self.conductance_min
         return w_phys
 
-    def map_to_math(self, w_phys):
-        """Map physical conductance [G_min, G_max] back to mathematical weights [-1, 1]."""
+    def map_to_math(self, w_phys: Union[float, np.ndarray, Any]) -> Union[float, np.ndarray, Any]:
+        """
+        Map physical conductance [G_min, G_max] back to mathematical weights [-1, 1].
+        
+        Args:
+            w_phys (Union[float, np.ndarray, Any]): Physical conductances.
+            
+        Returns:
+            Union[float, np.ndarray, Any]: Mathematical weights.
+        """
         w_norm = (w_phys - self.conductance_min) / (self.conductance_max - self.conductance_min)
         w_math = w_norm * 2.0 - 1.0
         return w_math
 
-    def get_noise_std(self):
-        """Calculate the absolute noise standard deviation in Siemens/Amperes."""
-        return (self.conductance_max - self.conductance_min) * self.noise_std_ratio
+    def get_noise_std(self) -> float:
+        """
+        Calculate the absolute noise standard deviation in Siemens/Amperes.
+        
+        Returns:
+            float: Absolute noise standard deviation.
+        """
+        return float((self.conductance_max - self.conductance_min) * self.noise_std_ratio)

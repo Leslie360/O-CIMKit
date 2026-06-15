@@ -1,11 +1,11 @@
 import torch
 import torch.nn as nn
-from core.layers import QATMLPLayer, OrganicSynapseConv
+from core.layers import SelfHealingCrossbar, SelfHealingConv2d
 
 class ConvVAE(nn.Module):
     """
     A Convolutional Variational Autoencoder (VAE) for 8x8 digit generation,
-    using hardware-aware layers in the decoder to simulate AIGC on CIM.
+    using hardware-aware self-healing layers in the decoder to simulate AIGC on CIM.
     """
     def __init__(self, latent_dim=8, device_profile=None):
         super().__init__()
@@ -22,12 +22,12 @@ class ConvVAE(nn.Module):
         self.fc_logvar = nn.Linear(16 * 4 * 4, latent_dim)
         
         # Decoder: Fully connected + Transpose Convolutions (Mapped to hardware-aware layers)
-        self.decoder_fc = QATMLPLayer(latent_dim, 16 * 4 * 4, device_profile=device_profile)
+        self.decoder_fc = SelfHealingCrossbar(latent_dim, 16 * 4 * 4, device_profile=device_profile)
         self.decoder_conv = nn.Sequential(
             nn.Upsample(scale_factor=2, mode='nearest'), # -> 8x8
-            OrganicSynapseConv(16, 8, kernel_size=3, stride=1, padding=1, device_profile=device_profile),
+            SelfHealingConv2d(16, 8, kernel_size=3, stride=1, padding=1, device_profile=device_profile),
             nn.ReLU(),
-            OrganicSynapseConv(8, 1, kernel_size=3, stride=1, padding=1, device_profile=device_profile),
+            SelfHealingConv2d(8, 1, kernel_size=3, stride=1, padding=1, device_profile=device_profile),
             nn.Sigmoid()
         )
         

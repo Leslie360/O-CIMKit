@@ -1,6 +1,7 @@
 import torch
 import torch.nn as nn
 import numpy as np
+from typing import Optional, Union, Tuple, Any
 from core.physics import inject_gaussian_noise, apply_non_linear_gradient, simulate_conductance_drift
 from core.quantization import LSQQuantizer, MinMaxQuantizer, STEClamp
 
@@ -9,7 +10,24 @@ class OrganicSynapseConv(nn.Conv2d):
     Hardware-Aware Convolutional Layer mapping mathematical weights to
     physical device conductances and simulating C2C write noise and LTP/LTD gradient non-linearities.
     """
-    def __init__(self, in_channels, out_channels, kernel_size, device_profile, **kwargs):
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        kernel_size: Union[int, Tuple[int, int]],
+        device_profile: Optional[Any] = None,
+        **kwargs: Any
+    ) -> None:
+        """
+        Initializes the OrganicSynapseConv layer.
+        
+        Args:
+            in_channels (int): Number of input channels.
+            out_channels (int): Number of output channels.
+            kernel_size (Union[int, Tuple[int, int]]): Size of the convolving kernel.
+            device_profile (Optional[Any]): The physical device profile containing conductance bounds and noise specs.
+            **kwargs: Additional arguments for nn.Conv2d (stride, padding, bias, etc.).
+        """
         super().__init__(in_channels, out_channels, kernel_size, **kwargs)
         self.profile = device_profile
         self.drift_hours = 0.0
@@ -33,7 +51,16 @@ class OrganicSynapseConv(nn.Conv2d):
             self.phys_max = None
             self.noise_std = 0.0
 
-    def forward(self, input):
+    def forward(self, input: torch.Tensor) -> torch.Tensor:
+        """
+        Applies a 2D hardware-aware convolution over an input signal.
+        
+        Args:
+            input (torch.Tensor): The input tensor of shape (N, C, H, W).
+            
+        Returns:
+            torch.Tensor: The convolved tensor with physical noise and drift applied.
+        """
         if self.profile is None:
             return self._conv_forward(input, self.weight, self.bias)
             
@@ -73,7 +100,24 @@ class QATMLPLayer(nn.Linear):
     Quantization-Aware Training (QAT) Fully Connected Layer.
     Quantizes weights to discrete states from DeviceProfile using LSQ or MinMax.
     """
-    def __init__(self, in_features, out_features, device_profile=None, bias=True, mode="minmax"):
+    def __init__(
+        self,
+        in_features: int,
+        out_features: int,
+        device_profile: Optional[Any] = None,
+        bias: bool = True,
+        mode: str = "minmax"
+    ) -> None:
+        """
+        Initializes the QATMLPLayer.
+        
+        Args:
+            in_features (int): Size of each input sample.
+            out_features (int): Size of each output sample.
+            device_profile (Optional[Any]): The physical device profile for discrete state mapping.
+            bias (bool): If set to False, the layer will not learn an additive bias. Default: True.
+            mode (str): Quantization mode, 'minmax' or 'lsq'.
+        """
         super().__init__(in_features, out_features, bias=bias)
         self.profile = device_profile
         self.quantizer = None
@@ -85,7 +129,16 @@ class QATMLPLayer(nn.Linear):
             else:
                 self.quantizer = LSQQuantizer(num_states=self.profile.discrete_states_count)
  
-    def forward(self, input):
+    def forward(self, input: torch.Tensor) -> torch.Tensor:
+        """
+        Applies a hardware-aware linear transformation to the incoming data.
+        
+        Args:
+            input (torch.Tensor): The input tensor of shape (N, *, in_features).
+            
+        Returns:
+            torch.Tensor: The output tensor of shape (N, *, out_features).
+        """
         w = self.weight
         if self.quantizer is not None:
             # Apply Learned Step Size Quantization (LSQ) on weights during forward pass
@@ -121,7 +174,26 @@ class PhysicalReservoir:
     """
     Physical Reservoir Computing Layer using device volatile/non-volatile time-scales.
     """
-    def __init__(self, n_inputs, n_reservoir, device_profile, dual_scale=True, seed=42, device='cpu'):
+    def __init__(
+        self,
+        n_inputs: int,
+        n_reservoir: int,
+        device_profile: Any,
+        dual_scale: bool = True,
+        seed: int = 42,
+        device: str = 'cpu'
+    ) -> None:
+        """
+        Initializes the PhysicalReservoir layer.
+        
+        Args:
+            n_inputs (int): Number of input features.
+            n_reservoir (int): Number of reservoir nodes.
+            device_profile (Any): The physical device profile for volatile properties.
+            dual_scale (bool): Whether to use dual time scales (fast and slow). Default: True.
+            seed (int): Random seed for reproducible initialization. Default: 42.
+            device (str): Device to place the tensors on. Default: 'cpu'.
+        """
         self.n_reservoir = n_reservoir
         self.profile = device_profile
         self.device = device
@@ -172,11 +244,13 @@ class PhysicalReservoir:
             pass
         return W
 
-    def process_sequence(self, X):
+    def process_sequence(self, X: Union[np.ndarray, torch.Tensor]) -> np.ndarray:
         """
         Process an input sequence of length T and return the reservoir state history.
+        
         Args:
-            X (np.ndarray or torch.Tensor): Input sequence shape (T, n_inputs).
+            X (Union[np.ndarray, torch.Tensor]): Input sequence shape (T, n_inputs).
+            
         Returns:
             np.ndarray: Unified state representation shape (T, n_reservoir).
         """
@@ -214,7 +288,7 @@ class PhysicalReservoir:
                 
         return np.array(states)
 
-    def extract_temporal_features(self, state_history):
+    def extract_temporal_features(self, state_history: np.ndarray) -> np.ndarray:
         """
         Extract high-dimensional features by concatenating temporal stats.
         Concats: Mean, Std, Max, Min, and final state.
@@ -235,7 +309,24 @@ class DynamicOrganicSynapse(nn.Module):
     and non-volatile quantized weight mapping (long-term memory) in a single physical layer.
     Processes sequences and maintains temporal state dynamics.
     """
-    def __init__(self, in_features, out_features, device_profile=None, bias=True, mode="minmax"):
+    def __init__(
+        self,
+        in_features: int,
+        out_features: int,
+        device_profile: Optional[Any] = None,
+        bias: bool = True,
+        mode: str = "minmax"
+    ) -> None:
+        """
+        Initializes the DynamicOrganicSynapse Layer.
+        
+        Args:
+            in_features (int): Size of each input sample.
+            out_features (int): Size of each output sample.
+            device_profile (Optional[Any]): The physical device profile.
+            bias (bool): If set to False, the layer will not learn an additive bias. Default: True.
+            mode (str): Quantization mode, 'minmax' or 'lsq'. Default: 'minmax'.
+        """
         super().__init__()
         self.in_features = in_features
         self.out_features = out_features
@@ -269,11 +360,16 @@ class DynamicOrganicSynapse(nn.Module):
         else:
             self.alpha = 0.35 # Default leaking rate for short-term memory
 
-    def forward(self, X, return_sequence=False):
+    def forward(self, X: torch.Tensor, return_sequence: bool = False) -> torch.Tensor:
         """
+        Forward pass applying physical dynamics over a temporal sequence.
+        
         Args:
-            X (torch.Tensor): Input sequence shape (batch_size, seq_len, in_features)
-            return_sequence (bool): If True, returns full state history, else final state.
+            X (torch.Tensor): Input sequence shape (batch_size, seq_len, in_features).
+            return_sequence (bool): If True, returns full state history, else final state. Default: False.
+            
+        Returns:
+            torch.Tensor: The processed output tensor.
         """
         batch_size, seq_len, _ = X.shape
         device = X.device
@@ -333,7 +429,24 @@ class SelfHealingCrossbar(nn.Linear):
     3. 'reference_calibration': On-chip reference column calibration (with process variation).
     4. 'self_healing': Unsupervised online mean & variance alignment.
     """
-    def __init__(self, in_features, out_features, device_profile=None, bias=True, mode="minmax"):
+    def __init__(
+        self,
+        in_features: int,
+        out_features: int,
+        device_profile: Optional[Any] = None,
+        bias: bool = True,
+        mode: str = "minmax"
+    ) -> None:
+        """
+        Initializes the SelfHealingCrossbar.
+        
+        Args:
+            in_features (int): Size of each input sample.
+            out_features (int): Size of each output sample.
+            device_profile (Optional[Any]): Hardware profile containing physics and noise configs.
+            bias (bool): If set to False, the layer will not learn an additive bias. Default: True.
+            mode (str): Quantization mode for hardware mapping. Default: 'minmax'.
+        """
         super().__init__(in_features, out_features, bias=bias)
         self.profile = device_profile
         self.quantizer = None
@@ -358,8 +471,22 @@ class SelfHealingCrossbar(nn.Linear):
         self.momentum = 0.1
         self.epsilon = 1e-5
         self.is_baseline_calibrated = False
+        
+        # Pre-compute physical variation buffers to save forward pass overhead
+        rng = torch.Generator().manual_seed(out_features)
+        base_drift_noise = torch.rand(out_features, 1, generator=rng) * 0.04 - 0.02
+        self.register_buffer("base_drift_noise", base_drift_noise)
 
-    def forward(self, input):
+    def forward(self, input: torch.Tensor) -> torch.Tensor:
+        """
+        Forward pass with drift simulation and unsupervised self-healing compensation.
+        
+        Args:
+            input (torch.Tensor): The input tensor of shape (N, *, in_features).
+            
+        Returns:
+            torch.Tensor: The dynamically compensated output tensor of shape (N, *, out_features).
+        """
         # 1. Apply QAT and hardware constraints (with power-law drift)
         w = self.weight
         if self.quantizer is not None:
@@ -385,10 +512,8 @@ class SelfHealingCrossbar(nn.Linear):
             
             w_phys = w_norm * (phys_max - phys_min) + phys_min
             
-            # Column-wise (channel-wise) drift exponent D2D variation
-            # Use deterministic seeding based on shape to keep it reproducible
-            rng = torch.Generator(device=w.device).manual_seed(self.out_features)
-            drift_exp = torch.rand(self.out_features, 1, generator=rng, device=w.device) * 0.04 + (nominal_drift_exp - 0.02)
+            # Column-wise (channel-wise) drift exponent D2D variation (Vectorized)
+            drift_exp = self.base_drift_noise + nominal_drift_exp
             drift_exp = torch.clamp(drift_exp, min=0.01)
             
             factor = torch.ones(self.out_features, 1, device=w.device)
@@ -514,7 +639,24 @@ class SelfHealingConv2d(OrganicSynapseConv):
     Tracks channel-wise activation statistics across batches/spatial grids and compensates for drift.
     Supports multiple dynamic compensation modes: 'none', 'global_scaling', 'reference_calibration', 'self_healing'.
     """
-    def __init__(self, in_channels, out_channels, kernel_size, device_profile, **kwargs):
+    def __init__(
+        self,
+        in_channels: int,
+        out_channels: int,
+        kernel_size: Union[int, Tuple[int, int]],
+        device_profile: Optional[Any],
+        **kwargs: Any
+    ) -> None:
+        """
+        Initializes the SelfHealingConv2d layer.
+        
+        Args:
+            in_channels (int): Number of input channels.
+            out_channels (int): Number of output channels.
+            kernel_size (Union[int, Tuple[int, int]]): Size of the convolving kernel.
+            device_profile (Optional[Any]): Hardware profile containing physics and noise configs.
+            **kwargs: Additional nn.Conv2d arguments.
+        """
         super().__init__(in_channels, out_channels, kernel_size, device_profile, **kwargs)
         self.self_healing_enabled = True
         self.compensation_mode = "self_healing"
@@ -530,8 +672,22 @@ class SelfHealingConv2d(OrganicSynapseConv):
         self.momentum = 0.1
         self.epsilon = 1e-5
         self.is_baseline_calibrated = False
+        
+        # Pre-compute physical variation buffers
+        rng = torch.Generator().manual_seed(out_channels)
+        base_drift_noise = torch.rand(out_channels, 1, 1, 1, generator=rng) * 0.04 - 0.02
+        self.register_buffer("base_drift_noise", base_drift_noise)
 
-    def forward(self, input):
+    def forward(self, input: torch.Tensor) -> torch.Tensor:
+        """
+        Forward pass with channel-wise drift simulation and spatial self-healing compensation.
+        
+        Args:
+            input (torch.Tensor): The input tensor of shape (N, C_in, H, W).
+            
+        Returns:
+            torch.Tensor: The dynamically compensated output tensor of shape (N, C_out, H_out, W_out).
+        """
         factor = torch.ones(self.out_channels, 1, 1, 1, device=self.weight.device)
         temp_k = getattr(self, "temperature_k", 300.0)
         cond_thermal_factor = np.exp(-0.08 / 8.617e-5 * (1.0 / temp_k - 1.0 / 300.0))
@@ -542,9 +698,8 @@ class SelfHealingConv2d(OrganicSynapseConv):
             thermal_factor = np.exp(-0.1 / 8.617e-5 * (1.0 / temp_k - 1.0 / 300.0))
             nominal_drift_exp = nominal_drift_exp * thermal_factor
             
-            # Channel-wise drift exponent variation
-            rng = torch.Generator(device=self.weight.device).manual_seed(self.out_channels)
-            drift_exp = torch.rand(self.out_channels, 1, 1, 1, generator=rng, device=self.weight.device) * 0.04 + (nominal_drift_exp - 0.02)
+            # Channel-wise drift exponent variation (Vectorized)
+            drift_exp = self.base_drift_noise + nominal_drift_exp
             drift_exp = torch.clamp(drift_exp, min=0.01)
             
             if self.drift_hours > 1.0:

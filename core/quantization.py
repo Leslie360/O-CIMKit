@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from typing import Any, Tuple
 
 class STEFunction(torch.autograd.Function):
     """
@@ -8,11 +9,13 @@ class STEFunction(torch.autograd.Function):
     Backward pass: identity gradient flow.
     """
     @staticmethod
-    def forward(ctx, input):
+    def forward(ctx: Any, input: torch.Tensor) -> torch.Tensor:
+        """Forward pass rounds the input to the nearest integer."""
         return torch.round(input)
 
     @staticmethod
-    def backward(ctx, grad_output):
+    def backward(ctx: Any, grad_output: torch.Tensor) -> torch.Tensor:
+        """Backward pass propagates the gradient unchanged."""
         return grad_output
 
 class STEClamp(torch.autograd.Function):
@@ -21,11 +24,13 @@ class STEClamp(torch.autograd.Function):
     Clamps inputs during forward, passes gradients through during backward.
     """
     @staticmethod
-    def forward(ctx, input, min_val, max_val):
+    def forward(ctx: Any, input: torch.Tensor, min_val: float, max_val: float) -> torch.Tensor:
+        """Forward pass clamps the input to [min_val, max_val]."""
         return torch.clamp(input, min_val, max_val)
 
     @staticmethod
-    def backward(ctx, grad_output):
+    def backward(ctx: Any, grad_output: torch.Tensor) -> Tuple[torch.Tensor, None, None]:
+        """Backward pass propagates the gradient unchanged."""
         return grad_output, None, None
 
 class LSQQuantizer(nn.Module):
@@ -33,7 +38,13 @@ class LSQQuantizer(nn.Module):
     Learned Step Size Quantization (LSQ) Module.
     Supports dynamic learnable step size 's' for quantized state optimization.
     """
-    def __init__(self, num_states):
+    def __init__(self, num_states: int) -> None:
+        """
+        Initializes the LSQQuantizer.
+        
+        Args:
+            num_states (int): Number of discrete states.
+        """
         super().__init__()
         self.num_states = num_states
         
@@ -46,14 +57,20 @@ class LSQQuantizer(nn.Module):
         self.s = nn.Parameter(torch.tensor(1.0))
         self.initialized = False
 
-    def initialize_step_size(self, weights):
-        """Initialize step size 's' based on the weight magnitude."""
+    def initialize_step_size(self, weights: torch.Tensor) -> None:
+        """
+        Initialize step size 's' based on the weight magnitude.
+        
+        Args:
+            weights (torch.Tensor): Weight tensor to compute initial step size.
+        """
         with torch.no_grad():
             max_val = torch.max(torch.abs(weights))
             self.s.data.fill_(max_val / (self.q_max - self.q_min))
             self.initialized = True
 
-    def forward(self, weights):
+    def forward(self, weights: torch.Tensor) -> torch.Tensor:
+        """Forward pass applying LSQ quantization to the weights."""
         if not self.initialized:
             self.initialize_step_size(weights)
             
@@ -75,11 +92,18 @@ class MinMaxQuantizer(nn.Module):
     Dynamic Min-Max Quantization Module.
     Quantizes weights dynamically to a fixed number of levels based on min/max of weights in each pass.
     """
-    def __init__(self, num_states):
+    def __init__(self, num_states: int) -> None:
+        """
+        Initializes the MinMaxQuantizer.
+        
+        Args:
+            num_states (int): Number of discrete states.
+        """
         super().__init__()
         self.num_states = num_states
 
-    def forward(self, weights):
+    def forward(self, weights: torch.Tensor) -> torch.Tensor:
+        """Forward pass applying MinMax quantization to the weights."""
         w_min = weights.min()
         w_max = weights.max()
         if w_min == w_max:

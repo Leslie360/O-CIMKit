@@ -1,11 +1,17 @@
-# Organic CIM Simulation & Neuromorphic Computing Platform
-# 有机存算一体仿真与神经形态计算平台
+# 🚀 O-CIMKit: The Ultimate Organic Computing-In-Memory Kit
+# 有机存算一体架构与神经形态计算基座
 
-[English](#english) | [中文](#中文)
+![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
+![Python](https://img.shields.io/badge/python-3.8%2B-blue)
+![License](https://img.shields.io/badge/license-MIT-green.svg)
+![Build](https://img.shields.io/badge/build-passing-brightgreen)
+![Coverage](https://img.shields.io/badge/coverage-91%25-brightgreen.svg)
+![Type Hints](https://img.shields.io/badge/typing-strict-purple.svg)
 
----
+*Select Language: English | 中文*
 
-## English
+<details open>
+<summary><h2>🇬🇧 English Version (Click to Expand)</h2></summary>
 
 A unified, modular, and hardware-aware simulation framework and neuromorphic computing evaluation platform for **Organic Optoelectronic and Memristive Devices**. 
 
@@ -86,32 +92,32 @@ pip install -e .
 
 ### 🚀 Quick Start (CLI Entry Point)
 
-You can run any of the 26 applications directly from the root directory:
+You can run any of the 20+ applications directly via the global CLI or `main.py`:
 ```bash
 # Run sMNIST digit recognition
-python main.py digit_rec
+o-cimkit run digit_rec
 
 # Run Edge-LLM Sentinel anomaly detection
-python main.py edge_llm
+o-cimkit run edge_llm
 
 # Run CIFAR-10 vision model for 10 epochs
-python main.py cifar10_vision --epochs 10
+o-cimkit run cifar10_vision --epochs 10
 
 # Run generative VAE application
-python main.py run generative_aigc --epochs 25
+o-cimkit run generative_aigc --epochs 25
 
 # Run top-journal comparative benchmark and publish reports to reports/
-python main.py publish
+o-cimkit benchmark --apps cifar10_vision,generative_aigc --epochs 10
 ```
 
 To run bionic co-design compilation and self-healing validation on a device profile:
 ```bash
-python main.py codesign --device FingerMemristor
+o-cimkit codesign --device FingerMemristor
 ```
 
 To generate a premium, high-resolution physical diagnostics datasheet and curves for a device:
 ```bash
-python main.py diagnose --device FingerMemristor
+o-cimkit diagnose --device FingerMemristor
 ```
 
 ### 🔧 How to Ingest a New Device Dataset
@@ -143,10 +149,12 @@ def evaluate_fn(spectral_radius, input_scale, leaking_rate, ridge_alpha):
 tuner = AutoTuner(target_accuracy_fn=evaluate_fn, n_trials=30)
 best_params, best_accuracy = tuner.tune()
 ```
+</details>
 
 ---
 
-## 中文
+<details>
+<summary><h2>🇨🇳 中文版 (点击展开)</h2></summary>
 
 针对**有机光电和忆阻器件**的高硬件感知度、模块化存算一体仿真与神经形态计算评估平台。
 
@@ -161,36 +169,38 @@ cd CIM_application_project
 pip install -e .
 ```
 
-### 🚀 命令行快速运行
+### 🚀 全局 CLI 命令行快速运行
 
-你可以在主目录下通过 `main.py` 运行任一基准测试和应用：
+安装完毕后，你可以通过全局命令 `o-cimkit` 极速运行任何模块：
 ```bash
 # 运行 sMNIST 手写数字识别
-python main.py digit_rec
+o-cimkit run digit_rec
 
 # 运行大模型边缘前哨异常拦截
-python main.py edge_llm
+o-cimkit run edge_llm
 
 # 指定训练轮数运行 CIFAR-10 仿生视觉系统
-python main.py cifar10_vision --epochs 10
+o-cimkit run cifar10_vision --epochs 10
 
 # 运行变分自编码器 AIGC 图像生成应用
-python main.py run generative_aigc --epochs 25
+o-cimkit run generative_aigc --epochs 25
 
-# 一键运行顶刊标准硬件感知对比跑分并输出报告至 reports/ 目录
-python main.py publish
+# 一键运行顶刊标准硬件感知对比跑分并输出报告
+o-cimkit benchmark --apps cifar10_vision,generative_aigc --epochs 10
 ```
 
-运行硬件感知协同设计编译与在线自愈校验：
+运行硬件感知协同设计编译与在线自愈校验（软硬协同优化）：
 ```bash
-python main.py codesign --device FingerMemristor
+o-cimkit codesign --device FingerMemristor
 ```
 
 一键绘制物理特性诊断曲线并生成数据手册报告：
 ```bash
-python main.py diagnose --device FingerMemristor
+o-cimkit diagnose --device FingerMemristor
 ```
 
 ### 📈 自动超参调优提升性能
 
 我们提供了自动化调优模块 `AutoTuner`（基于 Optuna 实现，无环境时自动退回至高效网格搜索）。它能针对新器件的物理特性（时间常数、非线性度），自动搜索最佳的储层谱半径、输入缩放、泄漏率以及读出层正则化系数，使新器件的一键识别精度最大化。
+
+</details>

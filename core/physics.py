@@ -1,6 +1,7 @@
 import torch
+from typing import List, Union
 
-def inject_gaussian_noise(w_phys, noise_std):
+def inject_gaussian_noise(w_phys: torch.Tensor, noise_std: float) -> torch.Tensor:
     """
     Injects Cycle-to-Cycle (C2C) read/write noise into physical weight values.
     
@@ -16,7 +17,7 @@ def inject_gaussian_noise(w_phys, noise_std):
     noise = torch.randn_like(w_phys) * noise_std
     return w_phys + noise
 
-def inject_poisson_shot_noise(x_flux, max_photons=1000):
+def inject_poisson_shot_noise(x_flux: torch.Tensor, max_photons: float = 1000.0) -> torch.Tensor:
     """
     Simulates Poisson shot noise for biological vision sensors under low light.
     
@@ -34,7 +35,15 @@ def inject_poisson_shot_noise(x_flux, max_photons=1000):
     # Scale back to math domain
     return noisy_photons / max_photons
 
-def apply_non_linear_gradient(grad, w_math, ltp_poly, ltd_poly, alpha=0.3, use_abs=False, normalize=False):
+def apply_non_linear_gradient(
+    grad: torch.Tensor,
+    w_math: torch.Tensor,
+    ltp_poly: List[float],
+    ltd_poly: List[float],
+    alpha: float = 0.3,
+    use_abs: bool = False,
+    normalize: bool = False
+) -> torch.Tensor:
     """
     Modifies backpropagation gradients based on the LTP/LTD non-linear slope.
     This simulates asymmetric and non-linear conductance updates.
@@ -86,7 +95,14 @@ def apply_non_linear_gradient(grad, w_math, ltp_poly, ltd_poly, alpha=0.3, use_a
     modified_grad = grad * ((1.0 - alpha) + alpha * poly_factor)
     return modified_grad
 
-def simulate_conductance_drift(w_phys, time_hours, drift_exponent=0.08, retention_noise=0.01, phys_min=0.0, phys_max=1.0):
+def simulate_conductance_drift(
+    w_phys: torch.Tensor,
+    time_hours: float,
+    drift_exponent: float = 0.08,
+    retention_noise: float = 0.01,
+    phys_min: float = 0.0,
+    phys_max: float = 1.0
+) -> torch.Tensor:
     """
     Simulates resistance/conductance drift and noise degradation in memristive crossbars over time.
     Model: G(t) = G(t0) * (t/t0)^(-nu) + State_Noise
