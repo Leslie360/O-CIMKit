@@ -90,6 +90,11 @@ cd CIM_application_project
 pip install -e .
 ```
 
+After installation, run the automated data preparation script to download standard vision datasets (MNIST, CIFAR-10) and generate lightweight mock data for proprietary medical/physical sensor datasets:
+```bash
+o-cimkit prepare-data
+```
+
 ### 🚀 Quick Start (CLI Entry Point)
 
 You can run any of the 20+ applications directly via the global CLI or `main.py`:
@@ -167,6 +172,11 @@ best_params, best_accuracy = tuner.tune()
 git clone https://github.com/Leslie360/CIM_application_project.git
 cd CIM_application_project
 pip install -e .
+```
+
+安装完成后，请运行自动化数据准备脚本。该脚本会自动下载标准视觉数据集（如 MNIST, CIFAR-10），并为那些封闭的医疗/物理专有数据集（如心电图、脑电图）生成轻量级的 Mock 测评数据，确保项目能够**开箱即用**：
+```bash
+o-cimkit prepare-data
 ```
 
 ### 🚀 全局 CLI 命令行快速运行

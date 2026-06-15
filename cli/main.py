@@ -48,6 +48,9 @@ def main():
     # Subcommand: publish
     publish_parser = subparsers.add_parser("publish", help="Run the top-journal comparative benchmark and publish reports")
 
+    # Subcommand: prepare-data
+    prepare_parser = subparsers.add_parser("prepare-data", help="Download standard datasets and generate lightweight mock data for custom sensors")
+
     args, extra_args = parser.parse_known_args()
     
     # Fallback to standard app run if subcommands are not specified
@@ -81,6 +84,9 @@ def main():
     elif args.command == "publish":
         from scripts.run_top_journal_benchmark import main as run_publish
         run_publish()
+    elif args.command == "prepare-data":
+        from scripts.download_datasets import download_all_datasets
+        download_all_datasets()
 
 if __name__ == "__main__":
     main()
