@@ -43,6 +43,7 @@ REFERENCE_ACCURACIES = {
     "olfactory_enose": "100.00% (Reservoir + QAT MLP + 28态忆阻器)",
     "eeg_motor_imagery": "100.00% (Spatio-Temporal Reservoir + QAT MLP)",
     "neuromorphic_kws": "100.00% (Multi-Scale Reservoir + QAT MLP)",
+    "generative_aigc": "MSE: 4.85e-3 (ConvVAE + 28态忆阻器)",
 }
 
 def run_application(app_name, extra_args):
@@ -77,6 +78,7 @@ def run_application(app_name, extra_args):
         "olfactory_enose": "applications/olfactory_enose/train.py",
         "eeg_motor_imagery": "applications/eeg_motor_imagery/train.py",
         "neuromorphic_kws": "applications/neuromorphic_kws/train.py",
+        "generative_aigc": "applications/generative_aigc/train.py",
     }
     
     if app_name not in app_map:
@@ -269,6 +271,7 @@ def run_benchmark(device_path, apps_list, epochs):
             "olfactory_enose": "applications/olfactory_enose/train.py",
             "eeg_motor_imagery": "applications/eeg_motor_imagery/train.py",
             "neuromorphic_kws": "applications/neuromorphic_kws/train.py",
+            "generative_aigc": "applications/generative_aigc/train.py",
         }
         
         # If no explicit app list, use representative subset
@@ -289,7 +292,8 @@ def run_benchmark(device_path, apps_list, epochs):
                     "seizure_detection", "biohybrid_spiking", 
                     "dvs_gesture", "neuromorphic_rl", "speech_emotion",
                     "edge_llm", "embodied_ai", "physical_attention",
-                    "olfactory_enose", "eeg_motor_imagery", "neuromorphic_kws"
+                    "olfactory_enose", "eeg_motor_imagery", "neuromorphic_kws",
+                    "generative_aigc"
                 ]
                 
         results = {}
