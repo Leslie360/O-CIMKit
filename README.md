@@ -114,6 +114,9 @@ o-cimkit run generative_aigc --epochs 25
 # Run Nano-GPT Large Language Model on Organic Memory
 o-cimkit run cim_nano_gpt
 
+# Run System-Level Architectural Profiler (DAC/ISCA/NeuroSim Metrics)
+o-cimkit profile --app cim_nano_gpt
+
 # Run top-journal comparative benchmark and publish reports
 o-cimkit benchmark --apps cifar10_vision,generative_aigc --epochs 10
 ```

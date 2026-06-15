@@ -51,6 +51,11 @@ def main():
     # Subcommand: prepare-data
     prepare_parser = subparsers.add_parser("prepare-data", help="Download standard datasets and generate lightweight mock data for custom sensors")
 
+    # Subcommand: profile
+    prof_parser = subparsers.add_parser("profile", help="Run System-Level Architectural Profiler (DAC/ISCA metrics: Area, Power, TOPS/W)")
+    prof_parser.add_argument("--app", required=True, help="Name of the application to profile")
+    prof_parser.add_argument("--device", help="Name or filepath of custom device profile JSON")
+
     args, extra_args = parser.parse_known_args()
     
     # Fallback to standard app run if subcommands are not specified
@@ -87,6 +92,9 @@ def main():
     elif args.command == "prepare-data":
         from scripts.download_datasets import download_all_datasets
         download_all_datasets()
+    elif args.command == "profile":
+        from scripts.architectural_profiler import run_profiling
+        run_profiling(args.app, args.device)
 
 if __name__ == "__main__":
     main()
