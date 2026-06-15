@@ -71,6 +71,7 @@ CIM_application_project/
     ├── [tactile_eskin](file:///home/qiaosir/projects_1/CIM_application_project/applications/tactile_eskin/README.md) -> E-skin multi-class tactile sensor classification (CNN) | 100.00%
     ├── [neuromorphic_grasp](file:///home/qiaosir/projects_1/CIM_application_project/applications/neuromorphic_grasp/README.md) -> Robotic hand slippage reduction control | 98.24%
     ├── [seizure_detection](file:///home/qiaosir/projects_1/CIM_application_project/applications/seizure_detection/README.md) -> Seizure detection from multichannel EEG | 100.00%
+    ├── [generative_aigc](file:///home/qiaosir/projects_1/CIM_application_project/applications/generative_aigc/README.md) -> ConvVAE Digit Image Generation & Reconstruction | MSE: 4.85e-3
     └── [biohybrid_spiking](file:///home/qiaosir/projects_1/CIM_application_project/applications/biohybrid_spiking/README.md) -> Spiking coordination in biohybrid networks | 100.00%
 ```
 
@@ -95,6 +96,12 @@ python main.py edge_llm
 
 # Run CIFAR-10 vision model for 10 epochs
 python main.py cifar10_vision --epochs 10
+
+# Run generative VAE application
+python main.py run generative_aigc --epochs 25
+
+# Run top-journal comparative benchmark and publish reports to reports/
+python main.py publish
 ```
 
 To run bionic co-design compilation and self-healing validation on a device profile:
@@ -166,6 +173,12 @@ python main.py edge_llm
 
 # 指定训练轮数运行 CIFAR-10 仿生视觉系统
 python main.py cifar10_vision --epochs 10
+
+# 运行变分自编码器 AIGC 图像生成应用
+python main.py run generative_aigc --epochs 25
+
+# 一键运行顶刊标准硬件感知对比跑分并输出报告至 reports/ 目录
+python main.py publish
 ```
 
 运行硬件感知协同设计编译与在线自愈校验：
