@@ -340,6 +340,7 @@ class SelfHealingCrossbar(nn.Linear):
         self.drift_hours = 0.0
         self.self_healing_enabled = True
         self.compensation_mode = "self_healing"
+        self.temperature_k = 300.0  # Temperature in Kelvin (nominal room temp 300K = 27C)
         
         if self.profile and self.profile.discrete_states_count is not None:
             if mode == "minmax":
@@ -369,10 +370,22 @@ class SelfHealingCrossbar(nn.Linear):
             phys_max = self.profile.conductance_max
             w_clamp = STEClamp.apply(w, -1.0, 1.0)
             w_norm = (w_clamp + 1.0) / 2.0
+            
+            # Temperature-aware Arrhenius activation for drift exponent and conductance
+            temp_k = getattr(self, "temperature_k", 300.0)
+            nominal_drift_exp = getattr(self.profile, 'drift_exponent', 0.06)
+            # Ea = 0.1 eV, kB = 8.617e-5 eV/K. Thermal factor increases drift exp at high temp.
+            thermal_factor = np.exp(-0.1 / 8.617e-5 * (1.0 / temp_k - 1.0 / 300.0))
+            nominal_drift_exp = nominal_drift_exp * thermal_factor
+            
+            # Arrhenius scaling of conductance minimum/maximum (Ea_cond = 0.08 eV)
+            cond_thermal_factor = np.exp(-0.08 / 8.617e-5 * (1.0 / temp_k - 1.0 / 300.0))
+            phys_min = phys_min * cond_thermal_factor
+            phys_max = phys_max * cond_thermal_factor
+            
             w_phys = w_norm * (phys_max - phys_min) + phys_min
             
             # Column-wise (channel-wise) drift exponent D2D variation
-            nominal_drift_exp = getattr(self.profile, 'drift_exponent', 0.06)
             # Use deterministic seeding based on shape to keep it reproducible
             rng = torch.Generator(device=w.device).manual_seed(self.out_features)
             drift_exp = torch.rand(self.out_features, 1, generator=rng, device=w.device) * 0.04 + (nominal_drift_exp - 0.02)
@@ -434,12 +447,15 @@ class SelfHealingCrossbar(nn.Linear):
             elif comp_mode == "global_scaling":
                 # Scale by 1/factor to revert nominal decay (using nominal factor)
                 nominal_drift_exp = getattr(self.profile, 'drift_exponent', 0.06)
+                # Arrhenius scaling for global scaling baseline as well
+                nominal_drift_exp = nominal_drift_exp * thermal_factor
                 nominal_factor = (self.drift_hours / 1.0) ** (-nominal_drift_exp) if self.drift_hours > 1.0 else 1.0
                 out = out / (nominal_factor + 1e-20)
             elif comp_mode == "reference_calibration":
                 # Simulated reference column tracking with process variation (3% read noise)
                 with torch.no_grad():
                     nominal_drift_exp = getattr(self.profile, 'drift_exponent', 0.06)
+                    nominal_drift_exp = nominal_drift_exp * thermal_factor
                     nominal_factor = (self.drift_hours / 1.0) ** (-nominal_drift_exp) if self.drift_hours > 1.0 else 1.0
                     ref_noise = torch.randn_like(self.baseline_mean) * 0.03
                     ref_factor = nominal_factor * (1.0 + ref_noise)
@@ -451,15 +467,34 @@ class SelfHealingCrossbar(nn.Linear):
                         flat_out = out.view(-1, out.size(-1))
                     else:
                         flat_out = out
-                    eval_mean = flat_out.mean(dim=0)
-                    eval_var = flat_out.var(dim=0, unbiased=False)
                     
-                    # Track online statistics using exponential moving average
-                    self.running_mean.copy_(self.running_mean * (1 - self.momentum) + eval_mean * self.momentum)
-                    self.running_var.copy_(self.running_var * (1 - self.momentum) + eval_var * self.momentum)
+                    batch_size = flat_out.size(0)
+                    if batch_size > 1:
+                        eval_mean = flat_out.mean(dim=0)
+                        eval_var = flat_out.var(dim=0, unbiased=False)
+                        
+                        # Adaptive tracking momentum based on statistics deviation
+                        diff_mean = torch.abs(eval_mean - self.running_mean).mean()
+                        dynamic_momentum = float(torch.clamp(diff_mean * 1.5, min=0.01, max=0.5).item())
+                        
+                        # Scale momentum based on batch size to avoid instability on small batches
+                        batch_factor = min(1.0, batch_size / 32.0)
+                        eff_momentum = dynamic_momentum * batch_factor
+                        
+                        self.running_mean.copy_(self.running_mean * (1 - eff_momentum) + eval_mean * eff_momentum)
+                        self.running_var.copy_(self.running_var * (1 - eff_momentum) + eval_var * eff_momentum)
+                    else:
+                        # Single sample inference
+                        eval_mean = flat_out.mean(dim=0)
+                        diff_mean = torch.abs(eval_mean - self.running_mean).mean()
+                        dynamic_momentum = float(torch.clamp(diff_mean * 1.5, min=0.01, max=0.5).item())
+                        eff_momentum = dynamic_momentum * 0.03
+                        
+                        self.running_mean.copy_(self.running_mean * (1 - eff_momentum) + eval_mean * eff_momentum)
+                        eval_var = torch.zeros_like(eval_mean)
                 
                 # Determine whether to use batch stats or running stats
-                use_batch_stats = flat_out.size(0) > 4
+                use_batch_stats = flat_out.size(0) > 16
                 comp_mean = eval_mean if use_batch_stats else self.running_mean
                 comp_var = eval_var if use_batch_stats else self.running_var
                 
@@ -483,11 +518,13 @@ class SelfHealingConv2d(OrganicSynapseConv):
         super().__init__(in_channels, out_channels, kernel_size, device_profile, **kwargs)
         self.self_healing_enabled = True
         self.compensation_mode = "self_healing"
+        self.temperature_k = 300.0  # Temperature in Kelvin
         
         # Register buffers for channel-wise activation statistics
         self.register_buffer("baseline_mean", torch.zeros(out_channels))
         self.register_buffer("baseline_var", torch.ones(out_channels))
         
+        # Online running statistics tracking
         self.register_buffer("running_mean", torch.zeros(out_channels))
         self.register_buffer("running_var", torch.ones(out_channels))
         self.momentum = 0.1
@@ -496,9 +533,16 @@ class SelfHealingConv2d(OrganicSynapseConv):
 
     def forward(self, input):
         factor = torch.ones(self.out_channels, 1, 1, 1, device=self.weight.device)
+        temp_k = getattr(self, "temperature_k", 300.0)
+        cond_thermal_factor = np.exp(-0.08 / 8.617e-5 * (1.0 / temp_k - 1.0 / 300.0))
+        
         if self.profile is not None:
-            # Channel-wise drift exponent variation
+            # Temperature-aware Arrhenius activation for drift exponent
             nominal_drift_exp = getattr(self.profile, 'drift_exponent', 0.06)
+            thermal_factor = np.exp(-0.1 / 8.617e-5 * (1.0 / temp_k - 1.0 / 300.0))
+            nominal_drift_exp = nominal_drift_exp * thermal_factor
+            
+            # Channel-wise drift exponent variation
             rng = torch.Generator(device=self.weight.device).manual_seed(self.out_channels)
             drift_exp = torch.rand(self.out_channels, 1, 1, 1, generator=rng, device=self.weight.device) * 0.04 + (nominal_drift_exp - 0.02)
             drift_exp = torch.clamp(drift_exp, min=0.01)
@@ -512,8 +556,8 @@ class SelfHealingConv2d(OrganicSynapseConv):
         
         # We manually apply drift to weights here for channel-wise precision
         w = self.weight
-        phys_min = self.profile.conductance_min
-        phys_max = self.profile.conductance_max
+        phys_min = self.profile.conductance_min * cond_thermal_factor
+        phys_max = self.profile.conductance_max * cond_thermal_factor
         w_clamp = STEClamp.apply(w, -1.0, 1.0)
         w_norm = (w_clamp + 1.0) / 2.0
         w_phys = w_norm * (phys_max - phys_min) + phys_min
@@ -570,11 +614,13 @@ class SelfHealingConv2d(OrganicSynapseConv):
                 pass
             elif comp_mode == "global_scaling":
                 nominal_drift_exp = getattr(self.profile, 'drift_exponent', 0.06)
+                nominal_drift_exp = nominal_drift_exp * thermal_factor
                 nominal_factor = (self.drift_hours / 1.0) ** (-nominal_drift_exp) if self.drift_hours > 1.0 else 1.0
                 out = out / (nominal_factor + 1e-20)
             elif comp_mode == "reference_calibration":
                 with torch.no_grad():
                     nominal_drift_exp = getattr(self.profile, 'drift_exponent', 0.06)
+                    nominal_drift_exp = nominal_drift_exp * thermal_factor
                     nominal_factor = (self.drift_hours / 1.0) ** (-nominal_drift_exp) if self.drift_hours > 1.0 else 1.0
                     ref_noise = torch.randn_like(self.baseline_mean) * 0.03
                     ref_factor = nominal_factor * (1.0 + ref_noise)
@@ -582,14 +628,34 @@ class SelfHealingConv2d(OrganicSynapseConv):
             elif comp_mode == "self_healing" and self.is_baseline_calibrated:
                 with torch.no_grad():
                     flat_out = out.permute(0, 2, 3, 1).reshape(-1, out.size(1))
-                    eval_mean = flat_out.mean(dim=0)
-                    eval_var = flat_out.var(dim=0, unbiased=False)
                     
-                    self.running_mean.copy_(self.running_mean * (1 - self.momentum) + eval_mean * self.momentum)
-                    self.running_var.copy_(self.running_var * (1 - self.momentum) + eval_var * self.momentum)
+                    flat_size = flat_out.size(0)
+                    if flat_size > 1:
+                        eval_mean = flat_out.mean(dim=0)
+                        eval_var = flat_out.var(dim=0, unbiased=False)
+                        
+                        # Adaptive tracking momentum based on statistics deviation
+                        diff_mean = torch.abs(eval_mean - self.running_mean).mean()
+                        dynamic_momentum = float(torch.clamp(diff_mean * 1.5, min=0.01, max=0.5).item())
+                        
+                        # Scale momentum based on flat size to avoid instability on small batches
+                        batch_factor = min(1.0, flat_size / 64.0)
+                        eff_momentum = dynamic_momentum * batch_factor
+                        
+                        self.running_mean.copy_(self.running_mean * (1 - eff_momentum) + eval_mean * eff_momentum)
+                        self.running_var.copy_(self.running_var * (1 - eff_momentum) + eval_var * eff_momentum)
+                    else:
+                        # Single activation point
+                        eval_mean = flat_out.mean(dim=0)
+                        diff_mean = torch.abs(eval_mean - self.running_mean).mean()
+                        dynamic_momentum = float(torch.clamp(diff_mean * 1.5, min=0.01, max=0.5).item())
+                        eff_momentum = dynamic_momentum * 0.03
+                        
+                        self.running_mean.copy_(self.running_mean * (1 - eff_momentum) + eval_mean * eff_momentum)
+                        eval_var = torch.zeros_like(eval_mean)
                     
                 # Use batch stats if flattened batch size is large enough
-                use_batch_stats = flat_out.size(0) > 64
+                use_batch_stats = flat_out.size(0) > 32
                 comp_mean = eval_mean if use_batch_stats else self.running_mean
                 comp_var = eval_var if use_batch_stats else self.running_var
                 

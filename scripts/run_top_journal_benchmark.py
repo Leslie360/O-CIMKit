@@ -425,7 +425,7 @@ def main():
     ax_d.legend(frameon=True, facecolor='#1b1b22', edgecolor='#33333d', fontsize=8)
     
     plt.tight_layout()
-    plot_path = os.path.join(project_root, "top_journal_benchmark.png")
+    plot_path = os.path.join(project_root, "reports", "top_journal_benchmark.png")
     plt.savefig(plot_path, facecolor=fig.get_facecolor(), edgecolor='none', bbox_inches='tight')
     print(f"✅ Multi-panel benchmark plot saved to: {plot_path}")
     
@@ -498,7 +498,7 @@ def main():
     ])
     
     report_md = "\n".join(report_lines)
-    report_path_md = os.path.join(project_root, "top_journal_benchmark_report.md")
+    report_path_md = os.path.join(project_root, "reports", "top_journal_benchmark_report.md")
     with open(report_path_md, 'w', encoding='utf-8') as f:
         f.write(report_md)
         

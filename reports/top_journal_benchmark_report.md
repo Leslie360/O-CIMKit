@@ -18,17 +18,17 @@ Our method **successfully preserves classification accuracy** near fresh levels 
 
 | Application Task | Lifetime Duration | Naive (Uncompensated) | IBM Global Scaling | Reference Calibration | **Our Self-Healing (Heal)** |
 | :--- | :--- | :---: | :---: | :---: | :---: |
-| **Face Rec (Yale Grayscale)** | Fresh (0h) | 100.00% | 100.00% | 100.00% | **86.67%** |
-| | 1 Month (720h) | 6.67% | 96.67% | 96.67% | **90.00%** |
-| | 10 Years (87.6k) | 6.67% | 93.33% | 56.67% | **96.67%** |
+| **Face Rec (Yale Grayscale)** | Fresh (0h) | 100.00% | 100.00% | 100.00% | **100.00%** |
+| | 1 Month (720h) | 10.00% | 100.00% | 96.67% | **100.00%** |
+| | 10 Years (87.6k) | 6.67% | 86.67% | 86.67% | **100.00%** |
 | | | | | | |
 | **ECG Classification (PTB-DB)** | Fresh (0h) | 100.00% | 100.00% | 100.00% | **100.00%** |
 | | 1 Month (720h) | 100.00% | 100.00% | 100.00% | **100.00%** |
 | | 10 Years (87.6k) | 100.00% | 100.00% | 100.00% | **100.00%** |
 | | | | | | |
-| **Speech Emotion (RAVDESS)** | Fresh (0h) | 77.04% | 77.04% | 77.04% | **70.37%** |
-| | 1 Month (720h) | 74.07% | 79.26% | 74.81% | **72.59%** |
-| | 10 Years (87.6k) | 73.33% | 75.56% | 75.56% | **70.37%** |
+| **Speech Emotion (RAVDESS)** | Fresh (0h) | 77.04% | 77.04% | 77.04% | **71.11%** |
+| | 1 Month (720h) | 74.07% | 79.26% | 74.81% | **73.33%** |
+| | 10 Years (87.6k) | 73.33% | 75.56% | 75.56% | **71.85%** |
 | | | | | | |
 
 ## 3. High-Fidelity Diagnostic Visualizations

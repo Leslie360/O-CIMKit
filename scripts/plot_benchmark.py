@@ -53,7 +53,7 @@ def parse_markdown_report(report_path):
 
 def main():
     project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    report_path = os.path.join(project_root, "device_benchmark_report_nonvolatile.md")
+    report_path = os.path.join(project_root, "reports", "device_benchmark_report_nonvolatile.md")
     
     tasks, bench_accs, sota_accs = parse_markdown_report(report_path)
     if not tasks:
@@ -122,7 +122,7 @@ def main():
     plt.tight_layout()
     
     # 5. Save figure
-    output_path = os.path.join(project_root, "benchmark_comparison.png")
+    output_path = os.path.join(project_root, "reports", "benchmark_comparison.png")
     plt.savefig(output_path, facecolor=fig.get_facecolor(), edgecolor='none', bbox_inches='tight')
     print(f"✅ Benchmark comparison chart saved successfully to: {output_path}")
 

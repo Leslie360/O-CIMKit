@@ -185,7 +185,7 @@ def main():
     plt.tight_layout()
     
     # Save files
-    plot_path = os.path.join(project_root, "reliability_retention.png")
+    plot_path = os.path.join(project_root, "reports", "reliability_retention.png")
     plt.savefig(plot_path, facecolor=fig.get_facecolor(), edgecolor='none', bbox_inches='tight')
     print(f"✅ Reliability chart saved to: {plot_path}")
     

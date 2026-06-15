@@ -324,7 +324,7 @@ def run_benchmark(device_path, apps_list, epochs):
         report_md = "\n".join(report_lines)
         
         # Write to local file
-        report_file = os.path.join(project_root, "device_benchmark_report.md")
+        report_file = os.path.join(project_root, "reports", "device_benchmark_report.md")
         with open(report_file, 'w', encoding='utf-8') as f:
             f.write(report_md)
             
@@ -486,7 +486,7 @@ def run_diagnostics(device_path):
 
     plt.tight_layout()
     
-    plot_path = os.path.join(project_root, "device_diagnostics.png")
+    plot_path = os.path.join(project_root, "reports", "device_diagnostics.png")
     plt.savefig(plot_path, facecolor=fig.get_facecolor(), edgecolor='none', bbox_inches='tight')
     
     report_lines = [
@@ -516,7 +516,7 @@ def run_diagnostics(device_path):
     ]
     
     report_md = "\n".join(report_lines)
-    report_path_md = os.path.join(project_root, "device_diagnostics_report.md")
+    report_path_md = os.path.join(project_root, "reports", "device_diagnostics_report.md")
     with open(report_path_md, 'w', encoding='utf-8') as f:
         f.write(report_md)
         
@@ -699,6 +699,9 @@ def main():
     diagnose_parser = subparsers.add_parser("diagnose", help="Generate physical diagnostic curves and datasheet report for a device profile")
     diagnose_parser.add_argument("--device", required=True, help="Name or filepath of custom device profile JSON")
 
+    # Subcommand: publish
+    publish_parser = subparsers.add_parser("publish", help="Run the top-journal comparative benchmark and publish reports")
+
     args, extra_args = parser.parse_known_args()
     
     # Fallback to standard app run if subcommands are not specified
@@ -715,6 +718,7 @@ def main():
             print("  python main.py benchmark --device FingerMemristor --epochs 3")
             print("  python main.py codesign --device FingerMemristor")
             print("  python main.py diagnose --device FingerMemristor")
+            print("  python main.py publish")
             return
             
     if args.command == "run":
@@ -728,6 +732,9 @@ def main():
         run_codesign(args.device)
     elif args.command == "diagnose":
         run_diagnostics(args.device)
+    elif args.command == "publish":
+        from scripts.run_top_journal_benchmark import main as run_publish
+        run_publish()
 
 if __name__ == "__main__":
     main()
