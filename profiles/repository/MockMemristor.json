@@ -1,0 +1,28 @@
+{
+    "device_name": "MockMemristor",
+    "device_type": "nonvolatile",
+    "dynamic_parameters": {
+        "is_volatile": false,
+        "tau_volatile": null,
+        "leaking_rate_volatile": null,
+        "is_nonvolatile": true,
+        "discrete_states_count": 32
+    },
+    "fitting_parameters": {
+        "conductance_min": 7.273192034259192e-11,
+        "conductance_max": 1.9792888880459028e-09,
+        "noise_std_ratio": 0.02,
+        "ltp_poly_coefficients": [
+            -0.07620729902685242,
+            0.1264970477506412,
+            -0.11076064882961724,
+            0.0577399513872788
+        ],
+        "ltd_poly_coefficients": [
+            -0.06823319336923282,
+            0.1167926389809354,
+            -0.11323322195946948,
+            0.006641512903144834
+        ]
+    }
+}

@@ -1,0 +1,28 @@
+{
+    "device_name": "PFO_AlOx_Volatile",
+    "device_type": "volatile",
+    "dynamic_parameters": {
+        "is_volatile": true,
+        "tau_volatile": 1.0,
+        "leaking_rate_volatile": 0.6321205588285577,
+        "is_nonvolatile": false,
+        "discrete_states_count": null
+    },
+    "fitting_parameters": {
+        "conductance_min": 1.272e-10,
+        "conductance_max": 4.522e-10,
+        "noise_std_ratio": 0.02,
+        "ltp_poly_coefficients": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ],
+        "ltd_poly_coefficients": [
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ]
+    }
+}

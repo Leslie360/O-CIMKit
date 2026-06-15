@@ -1,0 +1,28 @@
+{
+    "device_name": "FingerMemristor",
+    "device_type": "nonvolatile",
+    "dynamic_parameters": {
+        "is_volatile": false,
+        "tau_volatile": null,
+        "leaking_rate_volatile": null,
+        "is_nonvolatile": true,
+        "discrete_states_count": 28
+    },
+    "fitting_parameters": {
+        "conductance_min": 2.71e-11,
+        "conductance_max": 4.59e-10,
+        "noise_std_ratio": 0.02,
+        "ltp_poly_coefficients": [
+            -0.016829685456700084,
+            0.11394564787377015,
+            -0.14942576036911762,
+            0.08067441848385054
+        ],
+        "ltd_poly_coefficients": [
+            0.3689027196701321,
+            -0.4033401753591887,
+            -0.031899912388090784,
+            -0.005997991878856254
+        ]
+    }
+}
