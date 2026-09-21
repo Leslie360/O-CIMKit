@@ -85,8 +85,8 @@ CIM_application_project/
 
 To use this platform as an open-source library, clone this repository and run editable pip install in your environment:
 ```bash
-git clone https://github.com/Leslie360/CIM_application_project.git
-cd CIM_application_project
+git clone https://github.com/Leslie360/O-CIMKit.git
+cd O-CIMKit
 pip install -e .
 ```
 
@@ -175,8 +175,8 @@ best_params, best_accuracy = tuner.tune()
 
 支持一键作为 Python 库进行安装和开发：
 ```bash
-git clone https://github.com/Leslie360/CIM_application_project.git
-cd CIM_application_project
+git clone https://github.com/Leslie360/O-CIMKit.git
+cd O-CIMKit
 pip install -e .
 ```
 

@@ -189,8 +189,8 @@ def run_diagnostics(device_path):
     print(f"📝 Device diagnostic datasheet report saved to: {report_path_md}")
     print("=" * 60)
     
-    artifact_dir = "/home/qiaosir/.gemini/antigravity-cli/brain/fec583e9-bdc3-4183-a617-20063af7c173"
-    if os.path.exists(artifact_dir):
+    artifact_dir = os.environ.get("OCIMKIT_ARTIFACT_DIR")
+    if artifact_dir and os.path.exists(artifact_dir):
         import shutil
         shutil.copy(plot_path, os.path.join(artifact_dir, "device_diagnostics.png"))
         shutil.copy(report_path_md, os.path.join(artifact_dir, "device_diagnostics_report.md"))

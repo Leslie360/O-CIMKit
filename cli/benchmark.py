@@ -265,6 +265,8 @@ def run_benchmark(device_path, apps_list, epochs):
         
         for app, acc in results.items():
             ref = REFERENCE_ACCURACIES.get(app, "N/A")
+            if app == "ecg_ptbdb":
+                acc = f"{acc} (synthetic/mock)"
             report_lines.append(f"| **{app}** | **{acc}** | {ref} |")
             
         report_md = "\n".join(report_lines)

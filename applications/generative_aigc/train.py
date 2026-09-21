@@ -226,8 +226,8 @@ def main():
     print(f"✅ Generative comparison plot saved to: {plot_path}")
 
     # Copy to user artifacts folder
-    artifact_dir = "/home/qiaosir/.gemini/antigravity-cli/brain/fec583e9-bdc3-4183-a617-20063af7c173"
-    if os.path.exists(artifact_dir):
+    artifact_dir = os.environ.get("OCIMKIT_ARTIFACT_DIR")
+    if artifact_dir and os.path.exists(artifact_dir):
         import shutil
         shutil.copy(plot_path, os.path.join(artifact_dir, "generative_aigc_comparison.png"))
         print("✅ Copied generative comparison plot to user artifacts.")

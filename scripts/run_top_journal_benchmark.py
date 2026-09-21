@@ -430,8 +430,8 @@ def main():
     print(f"✅ Multi-panel benchmark plot saved to: {plot_path}")
     
     # Copy plot to user artifacts folder
-    artifact_dir = "/home/qiaosir/.gemini/antigravity-cli/brain/fec583e9-bdc3-4183-a617-20063af7c173"
-    if os.path.exists(artifact_dir):
+    artifact_dir = os.environ.get("OCIMKIT_ARTIFACT_DIR")
+    if artifact_dir and os.path.exists(artifact_dir):
         import shutil
         shutil.copy(plot_path, os.path.join(artifact_dir, "top_journal_benchmark.png"))
         print("✅ Copied benchmark plot to user artifacts.")

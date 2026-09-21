@@ -8,7 +8,7 @@
 | :--- | :--- | :--- |
 | **fingerprint_rec** | **92.47%** | 93.85% (ResNet-18 + 28态忆阻器) |
 | **ecg_cardio** | **97.40%** | 97.91% (QAT MLP + 64态AlOx) |
-| **ecg_ptbdb** | **100.00%** | 98.20% (QAT MLP + PTB-DB + 64态AlOx) |
+| **ecg_ptbdb** | **100.00% (synthetic/mock)** | 98.20% (QAT MLP + PTB-DB + 64态AlOx) |
 | **bearing_fault** | **99.69%** | 99.80% (QAT MLP + 64态AlOx) |
 | **optoelectronic_vision** | **94.88%** | 91.86% (Co-Design ResNet + OECT光电突触) |
 | **optoelectronic_cifar100** | **77.75%** | 76.21% (Co-Design ResNet + 28态忆阻器) |

@@ -34,14 +34,9 @@ def get_transforms(train=True):
         ])
 
 def get_dataloaders(data_root=None, batch_size=BATCH_SIZE, dataset_name="cifar10"):
-    local_datasets_dir = "/home/qiaosir/projects/datasets/data"
-    
     if data_root is None:
-        if os.path.exists(local_datasets_dir):
-            data_root = local_datasets_dir
-        else:
-            project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-            data_root = os.path.join(project_root, "data", "datasets", dataset_name)
+        project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        data_root = os.path.join(project_root, "data", "datasets", dataset_name)
         
     os.makedirs(data_root, exist_ok=True)
     
