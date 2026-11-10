@@ -3,132 +3,237 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>O-CIMKit · 有机存算一体垂域科研平台 | 在线演示</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <meta name="description" content="O-CIMKit：将有机存算一体器件实测数据转化为统一画像，并直通多类人工智能应用评测的垂域科研平台。">
+    <title>O-CIMKit｜让器件实测数据直接变成可信的 AI 评测</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <div class="background-glow"></div>
-
-    <!-- ============ Hero：这是什么 ============ -->
-    <header class="hero">
-        <div class="hero-badge">西安交通大学 · 垂域科研数据底座 · 在线演示</div>
-        <h1><span class="gradient-text">O-CIMKit</span> 有机存算一体垂域科研平台</h1>
-        <p class="hero-sub">
-            面向有机忆阻器 / OECT 器件研究的科研数据底座与智能分析平台 ——
-            把实验室实测器件数据自动变成可评测的 AI 应用，<strong>当天接入、当天评估</strong>。
-        </p>
-        <div class="hero-stats">
-            <div class="stat-chip"><span class="num">29</span><span class="cap">评估应用</span></div>
-            <div class="stat-chip"><span class="num">20+</span><span class="cap">标准化基准评测</span></div>
-            <div class="stat-chip"><span class="num">12</span><span class="cap">实测器件接入</span></div>
-            <div class="stat-chip"><span class="num">MIT</span><span class="cap">开源协议</span></div>
-        </div>
-        <div class="hero-actions">
-            <button class="btn primary" onclick="startSimulation(); document.getElementById('demoPanel').scrollIntoView({behavior:'smooth'})">▶ 开始演示</button>
-            <a class="btn" href="https://github.com/Leslie360/O-CIMKit" target="_blank">GitHub 仓库 ↗</a>
-        </div>
-        <ol class="hero-steps">
-            <li>看<strong>存算一体阵列</strong>上的 Nano-GPT 大语言模型实时推理；</li>
-            <li>观察<strong>器件老化（1 年漂移）</strong>如何让生成内容劣化；</li>
-            <li>观看平台<strong>在线自愈机制</strong>如何让精度恢复；</li>
-            <li>下拉看<strong>实验室真实器件数据</strong>的自动接入与评测结果。</li>
-        </ol>
+    <a class="skip-link" href="#evidence">跳到核心证据</a>
+    <header class="site-header">
+        <a class="brand" href="#overview" aria-label="返回首页">
+            <span class="brand-mark">O</span>
+            <span><strong>O-CIMKit</strong><small>有机存算一体垂域科研平台</small></span>
+        </a>
+        <nav aria-label="评审导览导航">
+            <a href="#evidence">真实数据闭环</a>
+            <a href="#applications">应用价值</a>
+            <a href="#reliability">可靠性</a>
+            <a href="#roadmap">复现与规划</a>
+            <a href="poster.html" target="_blank" rel="noopener">学术海报</a>
+        </nav>
+        <button class="button button-quiet print-button" type="button">打印 / 保存 PDF</button>
     </header>
 
-    <main class="dashboard">
-        <!-- ============ 演示面板 ============ -->
-        <span id="demoPanel"></span>
-        <section class="panel glass">
-            <h2>体系结构剖析 <span class="en">/ Hardware Profiler</span></h2>
-            <p class="subtitle">对存内运行的 Nano-GPT 做体系结构级能效剖析（示例指标）</p>
-            <div class="metrics-grid">
-                <div class="metric-card">
-                    <span class="label">能效 Energy Efficiency</span>
-                    <span class="value gradient-text" id="efficiency">-- TOPS/W</span>
+    <main>
+        <section class="hero" id="overview">
+            <div class="hero-copy">
+                <p class="eyebrow">西安交通大学 · 垂域科研智能平台申报演示</p>
+                <h1>让器件实测数据，<br><span>直接变成可信的 AI 评测</span></h1>
+                <p class="hero-lead">O-CIMKit 面向有机存算一体研究，将实验中的 LTP–LTD 曲线自动转化为统一器件画像，再接入器件约束模型与应用评测。当前打通 <strong>12 颗真实器件到心电分类</strong>的完整闭环，并提供 <strong data-app-count>28</strong> 个可扩展训练模块。</p>
+                <div class="hero-actions">
+                    <button class="button button-primary" id="startTour" type="button">开始 3 分钟评审导览</button>
+                    <a class="button button-secondary" href="#reproduce">查看复现步骤</a>
+                    <a class="text-link" href="https://github.com/Leslie360/O-CIMKit" target="_blank" rel="noreferrer">GitHub 仓库 <span aria-hidden="true">↗</span></a>
                 </div>
-                <div class="metric-card">
-                    <span class="label">推理时延 Latency</span>
-                    <span class="value" id="latency">-- ms</span>
-                </div>
-                <div class="metric-card">
-                    <span class="label">阵列面积 Area</span>
-                    <span class="value" id="area">-- mm²</span>
-                </div>
+                <ul class="hero-proofs" aria-label="核心证据">
+                    <li><strong>12 颗</strong><span>团队实测器件</span></li>
+                    <li><strong>5 折</strong><span>心搏级内部验证</span></li>
+                    <li><strong>1 个</strong><span>实测画像闭环案例</span></li>
+                    <li><strong>MIT</strong><span>开源协议</span></li>
+                </ul>
             </div>
-            <div class="chart-container">
-                <canvas id="lossChart"></canvas>
-            </div>
-        </section>
-
-        <!-- Live Crossbar Visualization -->
-        <section class="panel glass crossbar-panel">
-            <h2>有机忆阻器阵列 <span class="en">/ Crossbar Array</span></h2>
-            <p class="subtitle">16×16 忆阻器交叉阵列：每个方块是一个器件单元，颜色越亮电导越高，闪烁代表正在写入权重</p>
-            <div class="crossbar-grid" id="crossbarGrid">
-                <!-- Grid cells generated by JS -->
-            </div>
-            <div class="status-bar">
-                <span>器件退化 Degradation：<strong id="degradation" class="alert-text">0%</strong></span>
-                <span>阵列规模：<strong>16 × 16</strong></span>
+            <div class="hero-visual" aria-label="平台工作流程">
+                <div class="visual-header"><span>一条可复现的科研数据链</span><span class="status-dot">已完成真实数据验证</span></div>
+                <ol class="pipeline">
+                    <li><span class="step-number">01</span><div><strong>实验测量</strong><small>LTP-LTD.xlsx</small></div><span class="evidence-tag measured">团队实测</span></li>
+                    <li><span class="step-number">02</span><div><strong>统一器件画像</strong><small>状态 · 非线性 · 差异</small></div><span class="evidence-tag automatic">自动拟合</span></li>
+                    <li><span class="step-number">03</span><div><strong>器件约束训练</strong><small>量化感知 · 物理噪声</small></div><span class="evidence-tag simulation">物理仿真</span></li>
+                    <li><span class="step-number">04</span><div><strong>应用评估报告</strong><small>精度 · 可靠性 · 能效</small></div><span class="evidence-tag reproducible">可复现</span></li>
+                </ol>
+                <div class="visual-conclusion"><span>本次真实数据案例</span><strong>12 颗有机忆阻器 → 心电心律失常分类</strong><small>公开 MIT-BIH 数据 + 团队实测器件画像</small></div>
             </div>
         </section>
 
-        <!-- AIGC Nano-GPT Inference -->
-        <section class="panel glass inference-panel">
-            <h2>Nano-GPT 存内推理演示 <span class="en">/ LLM on CIM</span></h2>
-            <p class="subtitle">在模拟存算一体阵列上运行大语言模型：正常推理 → 1 年漂移劣化 → 在线自愈恢复</p>
-            <div class="terminal">
-                <div class="terminal-header">
-                    <div class="dot red"></div>
-                    <div class="dot yellow"></div>
-                    <div class="dot green"></div>
-                    <span class="terminal-title">bash - cim-inference</span>
+        <section class="verdict-strip" aria-label="评审结论摘要">
+            <div class="verdict-title"><span>评审先看结论</span><strong>真实、可用、可推广</strong></div>
+            <div><span class="verdict-index">A</span><p><strong>真数据已跑通</strong><small>不是只用模拟器件展示概念</small></p></div>
+            <div><span class="verdict-index">B</span><p><strong>精度未受显著影响</strong><small>实测画像约束与浮点基线相当</small></p></div>
+            <div><span class="verdict-index">C</span><p><strong>一次接入，多应用复用</strong><small>降低跨器件、跨算法评估门槛</small></p></div>
+        </section>
+
+        <section class="section" id="evidence" data-tour-title="核心证据：真实数据闭环">
+            <div class="section-heading">
+                <div><p class="section-kicker">01 / 核心证据</p><h2>一份真实实验表格，如何变成一份 AI 评测报告？</h2></div>
+                <p>以团队提供的 12 颗有机忆阻器为例，逐步核查原始曲线、自动提取的器件画像和心电应用结果。</p>
+            </div>
+
+            <article class="card evidence-card">
+                <div class="card-heading">
+                    <div><span class="stage-label">第一步 · 原始数据</span><h3>每一颗器件的真实 LTP–LTD 响应都可查看</h3></div>
+                    <span class="evidence-tag measured">团队实测数据</span>
                 </div>
-                <div class="terminal-body" id="terminalBody">
-                    <span class="prompt">$> 点击顶部"开始演示"按钮启动 ↗</span>
+                <div class="chart-toolbar" aria-label="器件曲线显示方式">
+                    <div class="segmented-control">
+                        <button class="active" type="button" data-chart-mode="all">12 颗器件叠加</button>
+                        <button type="button" data-chart-mode="mean">均值与离散区间</button>
+                    </div>
+                    <label>单独核查 <select id="deviceSelect"><option value="mean">选择单颗器件</option></select></label>
+                </div>
+                <div class="measured-layout">
+                    <div class="chart-panel">
+                        <svg id="measuredChart" class="chart" viewBox="0 0 900 390" role="img" aria-label="12 颗有机忆阻器的实测 LTP-LTD 曲线"></svg>
+                        <div class="chart-legend"><span><i class="legend-line ltp"></i>LTP 增强（1–50 脉冲）</span><span><i class="legend-line ltd"></i>LTD 抑制（51–100 脉冲）</span></div>
+                    </div>
+                    <aside class="source-panel">
+                        <span class="source-label">数据来源</span>
+                        <strong>LTP-LTD.xlsx</strong>
+                        <dl><div><dt>纳入画像</dt><dd>12 颗单器件</dd></div><div><dt>每颗脉冲</dt><dd>50 增强 + 50 抑制</dd></div><div><dt>额外保留</dt><dd>3 组多器件测量</dd></div><div><dt>信号类型</dt><dd>原始电流响应</dd></div></dl>
+                        <p>源表未标注单位，本页保留原始读数，不将其宣称为绝对电导。建模使用归一化响应及其动态范围。</p>
+                    </aside>
+                </div>
+            </article>
+
+            <div class="flow-connector" aria-hidden="true"><span></span><b>自动解析与拟合</b><span></span></div>
+
+            <article class="card profile-card">
+                <div class="card-heading">
+                    <div><span class="stage-label">第二步 · 器件画像</span><h3>把实验曲线提炼为可计算、可复用的物理参数</h3></div>
+                    <button class="button button-quiet" id="showProfile" type="button">查看画像 JSON</button>
+                </div>
+                <div class="profile-metrics">
+                    <div><span>离散状态数</span><strong id="profileStates">50</strong><small>由 LTP 脉冲数确定</small></div>
+                    <div><span>响应动态范围</span><strong id="profileRange">2.59×</strong><small>最大 / 最小原始响应</small></div>
+                    <div><span>器件间差异 CV</span><strong id="profileVariation">0.28%</strong><small>第 50 脉冲归一化响应</small></div>
+                    <div><span>非线性更新</span><strong>2 × 3 阶</strong><small>LTP / LTD 多项式拟合</small></div>
+                </div>
+                <p class="profile-note"><strong>画像不是一张图片：</strong>它包含状态数、动态范围、噪声与更新非线性，可被不同应用直接读取，避免每个团队重复搭建器件模型。</p>
+            </article>
+
+            <div class="flow-connector" aria-hidden="true"><span></span><b>注入量化感知训练</b><span></span></div>
+
+            <article class="card ecg-card">
+                <div class="card-heading">
+                    <div><span class="stage-label">第三步 · 应用验证（心搏级内部基准）</span><h3>实测画像约束与浮点基线相当，但不代表跨患者泛化</h3></div>
+                    <span class="evidence-tag simulation">实测画像 + 器件仿真</span>
+                </div>
+                <div class="ecg-context"><span>任务：MIT-BIH 心律失常二分类</span><span id="ecgSamples">3,776 个样本 · 15 条记录</span><span id="ecgValidation">心搏级分层五折 · 150 轮 / 折</span></div>
+                <div class="ecg-results">
+                    <div class="result-box"><span>纯算法浮点基线</span><strong id="floatAccuracy">98.09<small>%</small></strong><p id="floatStd">± 0.51 个百分点</p><span class="result-tag">无器件约束</span></div>
+                    <div class="result-delta"><span>实测画像约束后</span><strong id="accuracyDelta">-0.16</strong><small>个百分点</small><p>差值处于折间波动范围内<br><strong>结论是“相当”，不宣称超越基线</strong></p></div>
+                    <div class="result-box emphasized"><span>实测器件画像约束</span><strong id="hardwareAccuracy">97.93<small>%</small></strong><p id="hardwareStd">± 0.51 个百分点</p><span class="result-tag">50 态 + 非理想特性</span></div>
+                </div>
+                <div class="fold-evidence">
+                    <div><h4>五折结果不是单个“最好数字”</h4><p>每一折的精度均可核查，均值与标准差由同一评测流程自动计算。</p></div>
+                    <div id="foldDots" class="fold-dots" aria-label="五折交叉验证精度"></div>
+                </div>
+                <details class="evidence-details"><summary>展开五折结果与结果解释</summary><div id="foldTable"></div><p id="ecgF1"></p></details>
+                <div class="scientific-note"><strong>这一结果回答什么？</strong>验证团队实测器件数据能通过平台进入模型训练，并在该内部基准上保持与浮点模型相当的精度。心搏级五折可能让同一记录进入训练和测试，<strong>不证明跨患者泛化</strong>；结果也不是临床诊断或芯片实测。</div>
+            </article>
+
+            <article class="card patient-validation" id="patientEvidence" hidden>
+                <div class="card-heading">
+                    <div><span class="stage-label">补充验证 · 按记录隔离</span><h3>训练与测试使用完全不同的 MIT-BIH 记录</h3></div>
+                    <span class="evidence-tag reproducible">每折记录可复核</span>
+                </div>
+                <div class="ecg-context"><span id="patientCounts">15 条记录 · 每折训练 12 条、测试 3 条</span><span>StratifiedGroupKFold · 150 轮 / 折</span></div>
+                <div class="ecg-results">
+                    <div class="result-box"><span>分组浮点基线</span><strong id="patientFloat">—</strong><p id="patientFloatF1">宏平均 F1：—</p><span class="result-tag">同一分组、同一特征</span></div>
+                    <div class="result-delta"><span>分组精度差值</span><strong id="patientDelta">—</strong><small>个百分点</small><p>两种模型使用相同分组<br><strong>不与心搏级结果直接比较</strong></p></div>
+                    <div class="result-box emphasized"><span>分组实测画像约束</span><strong id="patientHardware">—</strong><p id="patientHardwareF1">宏平均 F1：—</p><span class="result-tag">50 态画像约束仿真</span></div>
+                </div>
+                <details class="evidence-details"><summary>展开每折测试记录与类别分布</summary><div id="patientFoldTable"></div></details>
+                <div class="scientific-note"><strong>验证边界：</strong>记录号作为分组标识，排除同一记录的心搏跨训练集与测试集。这是比随机心搏划分更严格的记录级检验，仍不等于多中心临床外部验证。</div>
+                <button class="button button-quiet" id="downloadPatientResults" type="button">下载记录隔离结果 JSON</button>
+            </article>
+
+            <div class="reproduce-box" id="reproduce">
+                <div><span class="stage-label">可复现性</span><h3>两条命令，完成真实数据接入与应用评测</h3><p>无需手工替换画像文件；评测自动保存每一折结果。</p></div>
+                <div class="commands">
+                    <div><code id="ingestCommand">python3 profiles/parser.py --file data/devices/LTP-LTD.xlsx --name XJTU_Measured_Memristor --type nonvolatile --measurement-type current</code><button type="button" class="copy-button" data-copy-target="ingestCommand">复制</button></div>
+                    <div><code id="evalCommand">python3 applications/ecg_cardio/train.py --dataset mitdb --epochs 150 --device-profile XJTU_Measured_Memristor --validation beat-kfold --seed 42 --output-json reports/xjtu_measured_ecg_results.json</code><button type="button" class="copy-button" data-copy-target="evalCommand">复制</button></div>
+                </div>
+                <button class="text-link download-results" id="downloadResults" type="button">下载本次五折结果 JSON</button>
+            </div>
+        </section>
+
+        <section class="section section-tinted" id="applications" data-tour-title="应用价值：一次接入，多应用复用">
+            <div class="section-heading">
+                <div><p class="section-kicker">02 / 应用价值</p><h2>平台的价值，不只是一个 98%</h2></div>
+                <p>统一画像接口覆盖 <strong data-app-count>28</strong> 个训练模块，减少为每个任务重复建模的工作；当前已完成的团队实测画像闭环为心电分类，其他任务按各自数据与模型分别标注。</p>
+            </div>
+            <div class="filter-bar" role="group" aria-label="按应用领域筛选">
+                <button class="active" type="button" data-filter="all">全部代表应用</button>
+                <button type="button" data-filter="health">医疗健康</button>
+                <button type="button" data-filter="industry">工业与感知</button>
+                <button type="button" data-filter="vision">视觉与边缘</button>
+                <button type="button" data-filter="frontier">大模型前沿</button>
+            </div>
+            <div class="app-grid" id="appGrid"></div>
+            <details class="catalog"><summary>查看全部 <span data-app-count>28</span> 个训练应用模块</summary><div id="appCatalog"></div></details>
+            <p class="section-footnote">除心电真实画像案例外，本页其余指标均为相应公开数据集或轻量数据上的器件/系统仿真结果，不代表芯片实测；能耗倍数为系统模型估算。</p>
+        </section>
+
+        <section class="section" id="reliability" data-tour-title="可靠性：让器件不仅可用，还能长期可用">
+            <div class="section-heading">
+                <div><p class="section-kicker">03 / 可靠性创新</p><h2>从“今天能用”走向“长期可用”</h2></div>
+                <p>有机器件会随时间漂移。平台探索无标签在线统计对齐进行输出补偿，无需重新训练；拖动时间轴可查看模型老化情景下不同方法的结果。</p>
+            </div>
+            <div class="reliability-layout card">
+                <div class="reliability-controls">
+                    <span class="evidence-tag simulation">公开数据 + 老化仿真</span>
+                    <h3>Yale 人脸识别寿命评测</h3>
+                    <p>器件画像：FingerMemristor<br>任务模型：ResNet-18 + QAT</p>
+                    <label for="timeSlider">老化时间 <strong id="timeLabel">10 年</strong></label>
+                    <input id="timeSlider" type="range" min="0" max="2" step="1" value="2" aria-valuetext="10 年">
+                    <div class="time-ticks"><span>全新</span><span>1 个月</span><span>10 年</span></div>
+                    <button class="button button-secondary" id="playReliability" type="button">播放漂移与补偿对比</button>
+                    <div class="reliability-finding"><span>当前结果</span><strong id="reliabilityDelta">+13.33 个百分点</strong><p id="reliabilityDescription">统计补偿相对全局缩放基线的精度差异</p></div>
+                </div>
+                <div>
+                    <div class="reliability-chart" id="reliabilityChart" aria-live="polite"></div>
+                    <div class="method-note"><strong>统计补偿如何工作？</strong><span>持续跟踪无标签数据流的激活均值与方差，将漂移后的分布重新对齐到初始基线。</span></div>
+                    <p class="section-footnote">这是器件老化模型的仿真结果，并非十年实物运行；Yale 测试集较小，结果用于验证方法有效性，正式论文仍需扩大样本与实物校准。</p>
                 </div>
             </div>
         </section>
 
-        <!-- Real Measured Device -->
-        <section class="panel glass wide-panel">
-            <h2>真实器件数据接入 <span class="en">/ Real Measured Device</span> · <span class="gradient-text">XJTU_Measured_Memristor</span></h2>
-            <p class="subtitle">
-                平台把 <strong>12 颗实验室实测有机忆阻器</strong>的 LTP–LTD 数据（50 增强 + 50 抑制脉冲）自动解析为统一器件画像（50 态），
-                并据此完成心电分类应用评测：<strong>物理约束下精度 98.01%，与浮点基线（97.91%）持平、零精度损失</strong>，达到学术先进水平。
-                本页曲线即为接入的真实测量数据。
-            </p>
-            <div class="stats-grid">
-                <div class="metric-card">
-                    <span class="label">电导态 States</span>
-                    <span class="value gradient-text">50</span>
-                </div>
-                <div class="metric-card">
-                    <span class="label">动态范围 Dynamic Range</span>
-                    <span class="value">2.59×</span>
-                </div>
-                <div class="metric-card">
-                    <span class="label">器件间差异 D2D (CV)</span>
-                    <span class="value">0.28%</span>
-                </div>
-                <div class="metric-card">
-                    <span class="label">心电分类精度 (MIT-BIH)</span>
-                    <span class="value">98.01%</span>
-                </div>
+        <section class="section section-tinted" id="roadmap" data-tour-title="复现与规划：从原型走向科研基础设施">
+            <div class="section-heading">
+                <div><p class="section-kicker">04 / 开放复现与未来工作</p><h2>已有原型，更有清晰的下一步</h2></div>
+                <p>把已完成的工程能力与计划建设内容分开陈述，让评审看清基础、边界和投入后的增量。</p>
             </div>
-            <div class="chart-container">
-                <canvas id="ltpChart"></canvas>
+            <div class="foundation-grid">
+                <article><span class="foundation-number">01</span><h3>统一数据接口</h3><p>Excel / TXT 原始数据接入，多器件自动聚合，画像记录来源与测量含义。</p><span class="status-label done">已实现</span></article>
+                <article><span class="foundation-number">02</span><h3>物理约束训练</h3><p>量化感知训练、直通估计、非线性更新与器件噪声统一注入。</p><span class="status-label done">已实现</span></article>
+                <article><span class="foundation-number">03</span><h3>自动化科研报告</h3><p>跨应用评测、自动调优、可靠性分析、诊断图与结构化结果输出。</p><span class="status-label done">已实现</span></article>
+                <article><span class="foundation-number">04</span><h3>开放工程基础</h3><p>MIT 开源、自动化测试、持续集成、命令行与可视化双界面。</p><span class="status-label done">已实现</span></article>
             </div>
-            <p class="footnote">注：以上流程均可复现 —— 原始数据放入 <code>data/devices/</code>，运行 <code>o-cimkit diagnose</code> 与 <code>o-cimkit run ecg_cardio</code> 即可重现。</p>
+            <div class="roadmap-grid">
+                <article class="roadmap-card"><span class="roadmap-phase">下一步 · 数据层</span><h3>建设有机器件实测数据库</h3><p>持续接入保持、弛豫与多批次统计，完善画像标准，让实验数据成为团队长期可复用的科研资产。</p></article>
+                <article class="roadmap-card"><span class="roadmap-phase">下一步 · 智能层</span><h3>研发垂域文献科研智能体</h3><p>自动检索文献、提取器件参数与实验条件、生成可追溯综述，与现有平台形成“器件数据 + 文献知识”双底座。</p><span class="status-label planned">规划，不计入现有成果</span></article>
+                <article class="roadmap-card"><span class="roadmap-phase">中期 · 硬件闭环</span><h3>用流片与实物测试校准模型</h3><p>扩大器件样本和任务规模，将仿真画像与硬件实测对齐，持续缩小评估结论与真实系统之间的差距。</p></article>
+            </div>
+            <div class="final-callout"><div><span>O-CIMKit</span><h2>让实验数据不再沉睡，让器件研究更快走向智能应用。</h2></div><button class="button button-primary print-button" type="button">保存评审版 PDF</button></div>
         </section>
     </main>
 
-    <footer class="footer">
-        <p>O-CIMKit · Organic Computing-in-Memory Kit — MIT License · <a href="https://github.com/Leslie360/O-CIMKit" target="_blank">github.com/Leslie360/O-CIMKit</a></p>
+    <footer class="site-footer">
+        <div><strong>O-CIMKit · Organic Computing-in-Memory Kit</strong><p>本页图表由本地数据与原生 SVG 生成，无需外部图表服务。证据标签区分团队实测、器件仿真与规划内容。</p></div>
+        <a href="https://github.com/Leslie360/O-CIMKit" target="_blank" rel="noreferrer">github.com/Leslie360/O-CIMKit ↗</a>
     </footer>
 
+    <dialog id="evidenceDialog" class="evidence-dialog">
+        <div class="dialog-heading"><h3 id="dialogTitle">器件画像</h3><button id="closeDialog" type="button" aria-label="关闭">×</button></div>
+        <pre id="dialogContent"></pre>
+        <button class="button button-primary" id="dialogDownload" type="button">下载 JSON</button>
+    </dialog>
+
+    <div class="tour-bar" id="tourBar" hidden aria-live="polite">
+        <span id="tourProgress">1 / 4</span><strong id="tourTitle">核心证据</strong>
+        <button id="nextTour" type="button">下一站</button><button id="closeTour" type="button" aria-label="退出导览">退出</button>
+    </div>
+
+    <script src="data.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
