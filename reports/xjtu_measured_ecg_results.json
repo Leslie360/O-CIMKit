@@ -1,0 +1,91 @@
+{
+  "created_at": "2026-11-09T19:17:54+08:00",
+  "application": "ecg_cardio",
+  "dataset": "mitdb",
+  "sample_count": 3776,
+  "class_counts": {
+    "0": 2832,
+    "1": 944
+  },
+  "validation": "StratifiedKFold(n_splits=5, shuffle=True, random_state=42)",
+  "epochs_per_fold": 150,
+  "seed": 42,
+  "device_profile": "XJTU_Measured_Memristor",
+  "device_profile_path": "profiles/repository/XJTU_Measured_Memristor.json",
+  "float_baseline": {
+    "accuracy_mean_percent": 98.09338098742073,
+    "accuracy_std_percent": 0.5128728866534616,
+    "f1_macro_mean": 0.9743827113464734,
+    "folds": [
+      {
+        "fold": 1,
+        "accuracy_percent": 97.4867724867725,
+        "f1_macro": 0.9658174981854527,
+        "test_samples": 756
+      },
+      {
+        "fold": 2,
+        "accuracy_percent": 98.54304635761589,
+        "f1_macro": 0.9804875183553597,
+        "test_samples": 755
+      },
+      {
+        "fold": 3,
+        "accuracy_percent": 97.48344370860927,
+        "f1_macro": 0.9666510906685823,
+        "test_samples": 755
+      },
+      {
+        "fold": 4,
+        "accuracy_percent": 98.27814569536424,
+        "f1_macro": 0.9768569279487669,
+        "test_samples": 755
+      },
+      {
+        "fold": 5,
+        "accuracy_percent": 98.67549668874173,
+        "f1_macro": 0.9821005215742058,
+        "test_samples": 755
+      }
+    ]
+  },
+  "measured_device_simulation": {
+    "accuracy_mean_percent": 97.93447562983987,
+    "accuracy_std_percent": 0.5128676439041616,
+    "f1_macro_mean": 0.9721910130880032,
+    "folds": [
+      {
+        "fold": 1,
+        "accuracy_percent": 97.35449735449735,
+        "f1_macro": 0.963951592138014,
+        "test_samples": 756
+      },
+      {
+        "fold": 2,
+        "accuracy_percent": 98.67549668874173,
+        "f1_macro": 0.9822296075920764,
+        "test_samples": 755
+      },
+      {
+        "fold": 3,
+        "accuracy_percent": 97.6158940397351,
+        "f1_macro": 0.9682399461551405,
+        "test_samples": 755
+      },
+      {
+        "fold": 4,
+        "accuracy_percent": 97.6158940397351,
+        "f1_macro": 0.9680132936657377,
+        "test_samples": 755
+      },
+      {
+        "fold": 5,
+        "accuracy_percent": 98.41059602649007,
+        "f1_macro": 0.9785206258890469,
+        "test_samples": 755
+      }
+    ]
+  },
+  "accuracy_delta_percentage_points": -0.15890535758086344,
+  "interpretation": "Device-constrained simulation using a profile fitted from measured LTP/LTD data; not a clinical or fabricated-chip result."
+}

@@ -4,9 +4,9 @@ from core.layers import QATMLPLayer, OrganicSynapseConv
 
 class SystemProfiler:
     """
-    Architectural Profiler for Computing-in-Memory (CIM) Hardware.
-    Evaluates system-level metrics: Energy Efficiency (TOPS/W), Area, Latency.
-    Compliant with benchmarking methodologies from ISCA, DAC, and NeuroSim.
+    Analytical architecture estimator for Computing-in-Memory (CIM) models.
+    Estimates energy efficiency, area, and latency from explicit assumptions.
+    Does not provide cycle-accurate circuit simulation or hardware validation.
     """
     def __init__(self, model: nn.Module, device_profile=None):
         self.model = model
@@ -63,7 +63,7 @@ class SystemProfiler:
             hook.remove()
 
     def get_report(self):
-        """Calculate and return DAC/ISCA compliant architectural metrics."""
+        """Calculate analytical architecture estimates from the configured assumptions."""
         # 1. Energy Calculation (in Joules)
         total_energy_pj = self.mac_count * (self.energy_per_mac_pj + self.adc_dac_energy_pj)
         total_energy_j = total_energy_pj * 1e-12

@@ -7,18 +7,23 @@ from profiles.device_profile import DeviceProfile
 from core.profiler import SystemProfiler
 
 def run_profiling(app_name, device_path):
-    print(f"\n🚀 [O-CIMKit Architectural Profiler] DAC/ISCA Benchmark Module")
+    print(f"\n[O-CIMKit] Analytical architecture estimation")
     print(f"================================================================")
-    
-    # 1. Load Device
+
     profile = None
-    if device_path and os.path.exists(device_path):
-        with open(device_path, 'r') as f:
-            profile = DeviceProfile(**json.load(f))
-        print(f"✅ Loaded CIM Device Profile: {profile.device_name}")
+    if device_path:
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        if not os.path.isfile(device_path):
+            device_path = os.path.join(project_root, "profiles", "repository", device_path)
+            if not device_path.endswith(".json"):
+                device_path += ".json"
+        if not os.path.isfile(device_path):
+            raise FileNotFoundError(f"Device profile not found: {device_path}")
+        profile = DeviceProfile.from_json(device_path)
+        print(f"Device profile: {profile.device_name}")
     else:
         profile = DeviceProfile(name="Generic_Memristor")
-        print("⚠️ No valid device profile. Using Generic Memristor 200x200nm defaults.")
+        print("No device profile supplied; using the documented generic assumptions.")
 
     # 2. Load Application Model
     if app_name == "cim_nano_gpt":
@@ -51,8 +56,8 @@ def run_profiling(app_name, device_path):
         else:
             print(f"{key:30} : {val:>10.4f}")
     print("-" * 50)
-    print("Metrics comply with standard NeuroSim evaluation parameters.")
-    print("Ready for ISCA, DAC, MICRO, HPCA paper submission.\n")
+    print("Analytical estimates only; assumptions depend on the selected profile.")
+    print("Validate circuit and architecture assumptions before publication or cross-tool comparison.\n")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="O-CIMKit Hardware Profiler")

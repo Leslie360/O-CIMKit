@@ -52,7 +52,7 @@ def main():
     prepare_parser = subparsers.add_parser("prepare-data", help="Download standard datasets and generate lightweight mock data for custom sensors")
 
     # Subcommand: profile
-    prof_parser = subparsers.add_parser("profile", help="Run System-Level Architectural Profiler (DAC/ISCA metrics: Area, Power, TOPS/W)")
+    prof_parser = subparsers.add_parser("profile", help="Estimate analytical architecture metrics: area, energy, latency, and TOPS/W")
     prof_parser.add_argument("--app", required=True, help="Name of the application to profile")
     prof_parser.add_argument("--device", help="Name or filepath of custom device profile JSON")
 

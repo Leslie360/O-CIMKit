@@ -1,0 +1,227 @@
+{
+  "created_at": "2026-11-10T11:36:55+08:00",
+  "application": "ecg_cardio",
+  "dataset": "mitdb",
+  "data_origin": "public MIT-BIH recordings",
+  "sample_count": 3776,
+  "record_count": 15,
+  "class_counts": {
+    "0": 2832,
+    "1": 944
+  },
+  "validation_strategy": "patient-group-kfold",
+  "validation": "StratifiedGroupKFold(n_splits=5, shuffle=True, random_state=42), groups are MIT-BIH record identifiers",
+  "epochs_per_fold": 150,
+  "seed": 42,
+  "device_profile": "XJTU_Measured_Memristor",
+  "device_profile_path": "profiles/repository/XJTU_Measured_Memristor.json",
+  "device_profile_source": {
+    "source_file": "LTP-LTD.xlsx",
+    "source_sheets": [
+      "单个1",
+      "单个2",
+      "单个3",
+      "单个4",
+      "单个5",
+      "单个6",
+      "单个7",
+      "单个8",
+      "单个9",
+      "单个10",
+      "单个11",
+      "单个12"
+    ],
+    "measurement_type": "current",
+    "measurement_unit": "not specified in source",
+    "device_count": 12,
+    "pulses_per_device": 100,
+    "aggregation": "arithmetic mean across device sheets",
+    "d2d_cv_at_ltp_end": 0.002797524507649536
+  },
+  "float_baseline": {
+    "accuracy_mean_percent": 80.04399087572597,
+    "accuracy_std_percent": 12.23136782232412,
+    "f1_macro_mean": 0.698266775155212,
+    "folds": [
+      {
+        "fold": 1,
+        "accuracy_percent": 92.13893967093236,
+        "f1_macro": 0.6267278180692872,
+        "test_samples": 547,
+        "test_class_counts": {
+          "0": 504,
+          "1": 43
+        },
+        "train_record_count": 12,
+        "test_record_count": 3,
+        "test_records": [
+          "100",
+          "101",
+          "113"
+        ]
+      },
+      {
+        "fold": 2,
+        "accuracy_percent": 89.24558587479936,
+        "f1_macro": 0.7610498898016429,
+        "test_samples": 623,
+        "test_class_counts": {
+          "0": 568,
+          "1": 55
+        },
+        "train_record_count": 12,
+        "test_record_count": 3,
+        "test_records": [
+          "103",
+          "114",
+          "115"
+        ]
+      },
+      {
+        "fold": 3,
+        "accuracy_percent": 73.81852551984878,
+        "f1_macro": 0.7371933005661178,
+        "test_samples": 1058,
+        "test_class_counts": {
+          "0": 516,
+          "1": 542
+        },
+        "train_record_count": 12,
+        "test_record_count": 3,
+        "test_records": [
+          "106",
+          "108",
+          "111"
+        ]
+      },
+      {
+        "fold": 4,
+        "accuracy_percent": 86.01307189542484,
+        "f1_macro": 0.8014042783421363,
+        "test_samples": 765,
+        "test_class_counts": {
+          "0": 613,
+          "1": 152
+        },
+        "train_record_count": 12,
+        "test_record_count": 3,
+        "test_records": [
+          "105",
+          "116",
+          "117"
+        ]
+      },
+      {
+        "fold": 5,
+        "accuracy_percent": 59.00383141762452,
+        "f1_macro": 0.5649585889968758,
+        "test_samples": 783,
+        "test_class_counts": {
+          "0": 631,
+          "1": 152
+        },
+        "train_record_count": 12,
+        "test_record_count": 3,
+        "test_records": [
+          "109",
+          "112",
+          "118"
+        ]
+      }
+    ]
+  },
+  "measured_device_simulation": {
+    "accuracy_mean_percent": 77.09695763148075,
+    "accuracy_std_percent": 14.462372005739757,
+    "f1_macro_mean": 0.6650686907508432,
+    "folds": [
+      {
+        "fold": 1,
+        "accuracy_percent": 90.12797074954297,
+        "f1_macro": 0.5879185267857143,
+        "test_samples": 547,
+        "test_class_counts": {
+          "0": 504,
+          "1": 43
+        },
+        "train_record_count": 12,
+        "test_record_count": 3,
+        "test_records": [
+          "100",
+          "101",
+          "113"
+        ]
+      },
+      {
+        "fold": 2,
+        "accuracy_percent": 85.553772070626,
+        "f1_macro": 0.7104540196645459,
+        "test_samples": 623,
+        "test_class_counts": {
+          "0": 568,
+          "1": 55
+        },
+        "train_record_count": 12,
+        "test_record_count": 3,
+        "test_records": [
+          "103",
+          "114",
+          "115"
+        ]
+      },
+      {
+        "fold": 3,
+        "accuracy_percent": 72.3062381852552,
+        "f1_macro": 0.7229532327068082,
+        "test_samples": 1058,
+        "test_class_counts": {
+          "0": 516,
+          "1": 542
+        },
+        "train_record_count": 12,
+        "test_record_count": 3,
+        "test_records": [
+          "106",
+          "108",
+          "111"
+        ]
+      },
+      {
+        "fold": 4,
+        "accuracy_percent": 86.66666666666667,
+        "f1_macro": 0.8071428571428572,
+        "test_samples": 765,
+        "test_class_counts": {
+          "0": 613,
+          "1": 152
+        },
+        "train_record_count": 12,
+        "test_record_count": 3,
+        "test_records": [
+          "105",
+          "116",
+          "117"
+        ]
+      },
+      {
+        "fold": 5,
+        "accuracy_percent": 50.8301404853129,
+        "f1_macro": 0.4968748174542905,
+        "test_samples": 783,
+        "test_class_counts": {
+          "0": 631,
+          "1": 152
+        },
+        "train_record_count": 12,
+        "test_record_count": 3,
+        "test_records": [
+          "109",
+          "112",
+          "118"
+        ]
+      }
+    ]
+  },
+  "accuracy_delta_percentage_points": -2.947033244245219,
+  "interpretation": "Device-profile-constrained simulation; not a clinical or fabricated-chip result."
+}

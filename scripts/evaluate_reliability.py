@@ -188,13 +188,6 @@ def main():
     plot_path = os.path.join(project_root, "reports", "reliability_retention.png")
     plt.savefig(plot_path, facecolor=fig.get_facecolor(), edgecolor='none', bbox_inches='tight')
     print(f"✅ Reliability chart saved to: {plot_path}")
-    
-    # Copy to artifact folder
-    artifact_dir = os.environ.get("OCIMKIT_ARTIFACT_DIR")
-    if artifact_dir and os.path.exists(artifact_dir):
-        import shutil
-        shutil.copy(plot_path, os.path.join(artifact_dir, "reliability_retention.png"))
-        print(f"✅ Reliability chart copied to artifact folder.")
 
 if __name__ == "__main__":
     main()

@@ -1,64 +1,81 @@
-# 🫀 MIT-BIH 心电心律存算一体量化感知分类诊断
+# MIT-BIH 心电分类：器件画像约束评测
 
-本目录包含了基于非易失性 64 电导状态忆阻器（Memristor）量化感知训练（QAT）的心电心律失常异常分类诊断系统。由于心电信号在时域上极易发生个体和环境温飘，本系统展示了在存在忆阻器多级状态电导散布与更新非线性的严苛物理环境下，如何通过 STE 量化和截断优化锁定高可靠性临床诊断精度。
+本模块演示如何将非易失器件画像接入心电二分类流程。它回答的是“实测曲线提取的量化状态与噪声尺度能否进入模型训练与评估”，不是临床诊断性能验证。
 
----
+## 模型与数据
 
-## 📊 1. 学术 SOTA 与平台精度对比
+1. 从 MIT-BIH 记录中读取带 `N/L/R/A/a/V/E` 标注的心搏，截取标注点前后各90个采样点，得到180点序列。
+2. 将 `N/L/R` 归为正常，将 `A/a/V/E` 归为异常。当前本地数据含15条记录，抽样后包含2,832个正常和944个异常心搏，共3,776个样本。
+3. 使用2,000节点的挥发储备池提取均值、标准差、最大值、最小值和末态特征，形成10,000维输入。
+4. 读出网络为 `10,000 → 256 → 2`，包含ReLU与dropout。浮点基线与器件约束模型使用相同特征、数据划分、训练轮数和逐折随机种子。
+5. `QATMLPLayer` 将读出权重映射到画像指定的离散状态数，并在训练前向传播中注入与画像响应范围成比例的高斯噪声。
 
-在 MIT-BIH 心电图分类（正常 Normal vs 异常 Anomaly 二分类）任务中，器件物理约束下的系统表现如下：
+当前画像中的 `noise_std_ratio` 由多颗器件在LTP末端的差异估计；它作为简化噪声尺度使用，不等同于完整、独立标定的周期间写入噪声模型。LTP/LTD多项式供支持非线性梯度近似的层使用，但本模块的 `QATMLPLayer` 不调用该梯度钩子。
 
-| 运行模式 (Mode) | 精度/评估指标 (Metric) | 物理环境与噪声配置 | 核心优化技术 |
-| :--- | :--- | :--- | :--- |
-| **Digital Baseline** (纯算法无噪) | **98.50%** | 无物理噪声，32位浮点精度 | 标准 4 层 MLP 神经网络 |
-| **Device Simulation** (本平台物理仿真) | **97.91% ± 0.45%** | 64态量化限制 + 物理 LTP/LTD 写入噪声 | **STE直通估计器 + 权重截断 (Weight Range Clipping) + 动态学习率** |
-| **Academic SOTA** (学术界公认范围) | **97.00% - 99.80%** | 心电信号在各种片上计算或仿真下的精度 | 各类高阶 SNN 或 QAT MLP 诊断框架 |
+## 已复跑结果
 
----
+固定 `seed=42`、每折150轮、心搏级分层五折交叉验证：
 
-## ⚡ 2. 物理器件映射与仿真特性
+| 评测方式 | 准确率 | 宏平均 F1 |
+| --- | --- | --- |
+| 浮点基线 | 98.09% ± 0.51个百分点 | 0.9744 |
+| XJTU实测画像约束 | 97.93% ± 0.51个百分点 | 0.9722 |
 
-系统绑定忆阻器模型（对应配置文件 `profiles/repository/PFO_AlOx_NonVolatile.json`），其物理非理想效应包括：
-1. **64 态非均匀离散阶梯**：
-   突触电导在 `[-1.0, 1.0]` 的权重范围中只有 64 个量子化电导等级，无法实现任意权值表示。
-2. **直通梯度不可微限制**：
-   在反向传播过程中，台阶电导会导致梯度处处为 0，使常规 SGD/Adam 无法工作。
-3. **写入 Cycle-to-Cycle (C2C) 散布**：
-   电导写入涨落会引入随机的高斯噪声偏差，干扰分类决策。
+差值为−0.16个百分点，结论是二者在该实验流程中表现相当，不是“零损失”或“超越基线”。逐折结果见 `reports/xjtu_measured_ecg_results.json`。
 
----
+### 记录隔离补充验证
 
-## 🧠 3. 计算模型与算法架构
+固定 `seed=42`、每折150轮，使用 `StratifiedGroupKFold` 按15条MIT-BIH记录分组，每折训练12条、测试3条：
 
-1. **时域切片输入**：
-   读取 MIT-BIH 数据库记录，将心电信号以波峰（Annotation）为中心截取 200 个采样的序列向量（100 个历史采样 + 100 个未来采样）。
-2. **量化感知多层感知机 (QAT MLP)**：
-   设计了 4 层 MLP 结构：
-   $$\text{Input (200)} \rightarrow \text{QATMLP (128)} \rightarrow \text{QATMLP (64)} \rightarrow \text{QATMLP (32)} \rightarrow \text{Output (2)}$$
-   每一层权重均被映射至 64 态忆阻器差分网络中。
+| 评测方式 | 准确率（均值±折间标准差） | 宏平均 F1 |
+| --- | --- | --- |
+| 浮点基线 | 80.04% ± 12.23个百分点 | 0.6983 |
+| XJTU实测画像约束 | 77.10% ± 14.46个百分点 | 0.6651 |
 
----
+差值为−2.95个百分点。每折测试记录均有正常与异常心搏，训练与测试记录零重叠；逐折记录号、类别分布和完整结果见 `reports/xjtu_measured_ecg_patient_group_results.json`。结果反映明显的记录间差异，说明跨记录泛化仍需改进；两种划分协议不能混用，也不能据此宣称临床或患者独立性能。
 
-## ⚙️ 4. 硬件感知极致优化技术 (HAT)
+## 复现命令
 
-* **直通估计器 (Straight-Through Estimator, STE)**：
-  在反向传播中，前向传播使用 64 阶梯进行器件量化，反向传播时将量化器处的梯度直接设定为恒等映射（Identity），绕过了物理不可微障碍，使网络能够在大规模多状态下正常学习。
-* **物理权重范围截断 (Weight Range Clipping)**：
-  因为忆阻器物理极性存在饱和电导限制（最大 $G_{\text{max}}$ 和最小 $G_{\text{min}}$），在训练过程中，任何超出 $[-1.0, 1.0]$ 的突触权重都将被强行截断，防止了器件在大电流下烧毁，同时平滑了量化边界。
-* **带有余弦退火的 Adam 训练**：
-  让模型平缓接近 64 态局部极值点。
-
----
-
-## 🚀 5. 快速启动与参数说明
-
-### 运行心电心律 QAT 训练与评估：
 ```bash
-python3 main.py ecg_cardio --epochs 30 --batch-size 32 --lr 0.001
+python3 profiles/parser.py \
+  --file data/devices/LTP-LTD.xlsx \
+  --name XJTU_Measured_Memristor \
+  --type nonvolatile \
+  --measurement-type current
+
+python3 applications/ecg_cardio/train.py \
+  --dataset mitdb \
+  --epochs 150 \
+  --device-profile XJTU_Measured_Memristor \
+  --validation beat-kfold \
+  --seed 42 \
+  --output-json reports/xjtu_measured_ecg_results.json
 ```
 
-### 关键命令行参数：
-* `--epochs`：QAT 训练轮数（默认 30 轮即完全收敛）。
-* `--batch-size`：批次大小（默认 32）。
-* `--lr`：初始学习率（默认 0.001）。
-* `--device-profile`：指定器件配置，默认载入 `profiles/repository/PFO_AlOx_NonVolatile.json`。
+记录隔离的补充验证使用独立结果文件，不覆盖上述心搏级基线：
+
+```bash
+python3 applications/ecg_cardio/train.py \
+  --dataset mitdb \
+  --epochs 150 \
+  --device-profile XJTU_Measured_Memristor \
+  --validation patient-group-kfold \
+  --seed 42 \
+  --output-json reports/xjtu_measured_ecg_patient_group_results.json
+```
+
+参数：
+
+- `--epochs`：每折训练轮数，默认150。
+- `--device-profile`：非易失画像名称或JSON路径，默认 `PFO_AlOx_NonVolatile`。
+- `--validation`：数据划分方式；`beat-kfold` 用于复现上述历史基线，`patient-group-kfold` 按MIT-BIH记录隔离训练与测试。
+- `--seed`：模型优化和数据加载随机种子，默认42；心搏级划分固定为42以保持历史结果可复现。
+- `--output-json`：保存每折准确率、宏平均F1、样本数、验证协议和画像来源。
+
+## 结果解释边界
+
+- `beat-kfold` 在心搏层面随机划分，同一记录的心搏可能同时出现在训练集和测试集，不证明跨患者泛化能力。
+- `patient-group-kfold` 使用记录号作为组标识，避免同一记录跨越训练集与测试集；小记录集合上的分组结果应单独报告，不与心搏级结果直接比较。
+- MIT-BIH记录号作为记录级隔离标识，用于降低相邻心搏泄漏风险，不等同于临床多中心外部验证。
+- 结果来自公开心电数据与实测曲线驱动画像的器件仿真，不是芯片实测或医疗器械性能证明。
+- 数据预处理、抽样策略、模型规模及记录范围均会影响结果，跨论文比较必须保持协议一致。

@@ -32,11 +32,12 @@ class DeviceProfile:
         self.conductance_min = kwargs.get("conductance_min", 1.0)
         self.conductance_max = kwargs.get("conductance_max", 10.0)
         self.noise_std_ratio = kwargs.get("noise_std_ratio", 0.0)  # noise relative to conductance range
-        
+
         # 3. LTP / LTD Non-linearity Coefficients (3rd-order polynomials)
         self.ltp_poly_coefficients = kwargs.get("ltp_poly_coefficients", [0.0, 0.0, 0.0, 0.0])
         self.ltd_poly_coefficients = kwargs.get("ltd_poly_coefficients", [0.0, 0.0, 0.0, 0.0])
-        
+        self.source_metadata = kwargs.get("source_metadata", {})
+
         # Calculate leaking rate if tau is provided
         if self.is_volatile and self.tau_volatile is not None and self.leaking_rate_volatile is None:
             # Alpha leaking rate matching ESN discrete updates: alpha = 1 - exp(-1/tau)
@@ -44,16 +45,23 @@ class DeviceProfile:
 
     @classmethod
     def from_json(cls, json_path: str) -> "DeviceProfile":
-        """Load a device profile from a JSON configuration file."""
+        """Load a device profile, using an optional per-process benchmark overlay."""
+        overlay_dir = os.environ.get("OCIMKIT_PROFILE_OVERLAY_DIR")
+        if overlay_dir:
+            overlay_path = os.path.join(overlay_dir, os.path.basename(json_path))
+            if os.path.isfile(overlay_path):
+                json_path = overlay_path
         with open(json_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
-            
+
         kwargs = {}
         if "dynamic_parameters" in data:
             kwargs.update(data["dynamic_parameters"])
         if "fitting_parameters" in data:
             kwargs.update(data["fitting_parameters"])
-            
+        if "source_metadata" in data:
+            kwargs["source_metadata"] = data["source_metadata"]
+
         return cls(
             name=data["device_name"],
             device_type=data.get("device_type", "memristor"),
@@ -80,7 +88,9 @@ class DeviceProfile:
                 "ltd_poly_coefficients": list(self.ltd_poly_coefficients)
             }
         }
-        
+        if self.source_metadata:
+            data["source_metadata"] = self.source_metadata
+
         os.makedirs(os.path.dirname(json_path), exist_ok=True)
         with open(json_path, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=4, ensure_ascii=False)

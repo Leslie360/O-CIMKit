@@ -1,0 +1,51 @@
+{
+    "device_name": "XJTU_Measured_Memristor",
+    "device_type": "memristor",
+    "dynamic_parameters": {
+        "is_volatile": false,
+        "tau_volatile": null,
+        "leaking_rate_volatile": null,
+        "is_nonvolatile": true,
+        "discrete_states_count": 50
+    },
+    "fitting_parameters": {
+        "conductance_min": 1.1101666666666665,
+        "conductance_max": 2.88025,
+        "noise_std_ratio": 0.002797524507649536,
+        "ltp_poly_coefficients": [
+            -0.3790355398005241,
+            0.7717320114121861,
+            -0.5197321238192292,
+            0.13124737987494425
+        ],
+        "ltd_poly_coefficients": [
+            -0.21609730880052308,
+            0.18155450807257367,
+            -0.06949676043078848,
+            -0.004970708278913981
+        ]
+    },
+    "source_metadata": {
+        "source_file": "LTP-LTD.xlsx",
+        "source_sheets": [
+            "单个1",
+            "单个2",
+            "单个3",
+            "单个4",
+            "单个5",
+            "单个6",
+            "单个7",
+            "单个8",
+            "单个9",
+            "单个10",
+            "单个11",
+            "单个12"
+        ],
+        "measurement_type": "current",
+        "measurement_unit": "not specified in source",
+        "device_count": 12,
+        "pulses_per_device": 100,
+        "aggregation": "arithmetic mean across device sheets",
+        "d2d_cv_at_ltp_end": 0.002797524507649536
+    }
+}

@@ -1,225 +1,168 @@
-# 🚀 O-CIMKit: The Ultimate Organic Computing-In-Memory Kit
-# 有机存算一体架构与神经形态计算基座
+# O-CIMKit
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)
-![Python](https://img.shields.io/badge/python-3.8%2B-blue)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
-![Build](https://img.shields.io/badge/build-passing-brightgreen)
-![Coverage](https://img.shields.io/badge/coverage-91%25-brightgreen.svg)
-![Type Hints](https://img.shields.io/badge/typing-strict-purple.svg)
+**A source-aware research data and intelligent-analysis platform for organic computing-in-memory devices.**
 
-*Select Language: English | 中文*
+O-CIMKit connects experimental LTP/LTD measurements, reusable device profiles, hardware-aware PyTorch models, and reproducible application reports. It is intended for device and materials researchers who want to evaluate a measured device across AI tasks without rebuilding the modelling workflow for every task.
 
-<details open>
-<summary><strong>🇬🇧 English Version (Click to Expand)</strong></summary>
+[English](#overview) · [中文](#项目简介) · [Review dashboard](applications/web_dashboard/index.html) · [Measured-data case](#measured-data-case) · [License](LICENSE)
 
-A unified, modular, and hardware-aware simulation framework and neuromorphic computing evaluation platform for **Organic Optoelectronic and Memristive Devices**. 
+## Overview
 
-It decouples experimental device measurements (from raw Excel/TXT files) from machine learning models. Using this platform, you can easily ingest raw device measurements and immediately test them across 19 diverse SOTA neuromorphic applications.
+- **Experiment ingestion:** Excel/TXT input, multi-device aggregation, source metadata, LTP/LTD fitting, and device-to-device endpoint variation.
+- **Device-aware models:** quantization-aware layers, volatile reservoir dynamics, nonlinear-update approximations, and output-statistics drift compensation.
+- **Application catalog:** 28 directories containing `train.py` modules covering biomedical signals, sensing, vision, control, and generative modelling. The catalog size is not a claim that all modules have been rerun with the XJTU measured profile.
+- **Research outputs:** per-fold JSON results, diagnostic plots, cross-application evaluation, and an offline SVG-based review dashboard.
 
-### 📂 Project Structure
+### Evidence boundaries
 
-```text
-CIM_application_project/
-├── core/                         # 1. Core Physics & Simulation Kernel
-│   ├── __init__.py               # Package public API exposure
-│   ├── physics.py                # Device white noise, Poisson shot noise, LTP/LTD gradient modification
-│   ├── quantization.py           # Learned Step Size Quantization (LSQ) & Straight-Through Estimator (STE)
-│   ├── layers.py                 # OrganicSynapseConv, QATMLPLayer, PhysicalReservoir
-│   └── autotune.py               # AutoTuner (using Optuna or grid search fallback for optimization)
-│
-├── profiles/                     # 2. Device Profile Manager
-│   ├── __init__.py               # Package public API exposure
-│   ├── device_profile.py         # Unified DeviceProfile data class
-│   ├── parser.py                 # Reads raw Excel (.xlsx) / TXT and fits models
-│   ├── fitter.py                 # Fits LTP/LTD polynomials & volatile relaxation constants
-│   └── repository/               # Generated JSON configurations (e.g. OECT_Vision.json)
-│
-├── data/                         # 3. Data Storage Pointer
-│   ├── devices/                  # Store raw experimental files (e.g. conductance.txt)
-│   └── datasets/                 # Datasets (MNIST, MIT-BIH, Sleep-EDF, CIFAR-10, etc.)
-│
-├── tests/                        # 4. Unit Test Suite (Subclasses of unittest.TestCase)
-│   ├── test_quantization.py      # Tests LSQ/MinMax quantization and STE gradient flow
-│   ├── test_layers.py            # Tests volatile DynamicOrganicSynapse & non-volatile SelfHealingCrossbar
-│   ├── test_compiler.py          # Tests compiler logic and model synthesis
-│   └── test_autotune.py          # Tests Bayesian reservoir hyperparameter autotuning
-│
-├── scripts/                      # 5. One-Shot Demonstration & Plotting Utilities
-│   ├── verify_codesign_selfhealing.py # Verifies co-design training and self-healing under 10-year drift
-│   ├── evaluate_reliability.py        # Runs 10-year reliability aging analysis on Yale faces
-│   ├── plot_benchmark.py              # Plots bar chart comparing device metrics against platform SOTA
-│   ├── autotune_demo.py               # Demonstration of Optuna reservoir hyperparameter tuning
-│   └── generate_mock_device_data.py   # Generates mock memristor/OECT measurements
-│
-├── pyproject.toml                # 6. Pip packaging and installation configuration
-├── LICENSE                       # 7. MIT License file for open-source compliance
-├── CONTRIBUTING.md               # 8. Guide for contributing to the repository
-├── run_tests.py                  # 9. Main unit test discovery and runner execution script
-├── main.py                       # 10. Root-level unified CLI entry point
-│
-└── applications/                 # 11. Neural Network & Reservoir Applications
-    ├── [ecg_cardio](applications/ecg_cardio) -> MIT-BIH classification (QAT MLP) | 97.91% ± 0.45%
-    ├── [fatigue_eeg](applications/fatigue_eeg) -> Sleep-EDF stage detection (Multi-Scale RC + QAT MLP) | 71.95% ± 2.70%
-    ├── [bearing_fault](applications/bearing_fault) -> CWRU fault detection (QAT MLP) | 99.80% ± 0.25%
-    ├── [chaotic_lorenz](applications/chaotic_lorenz) -> Lorenz attractor forecasting (Volatile RC) | NRMSE 0.0214%
-    ├── [digit_rec](applications/digit_rec) -> Sequential MNIST digits recognition (Volatile RC) | 95.00%
-    ├── [speech_emotion](applications/speech_emotion) -> RAVDESS speech emotion classification (QAT MLP) | 83.77% ± 4.01%
-    ├── [embodied_ai](applications/embodied_ai) -> Tactile multimodality materials classification (RC) | ~99.00%
-    ├── [edge_llm](applications/edge_llm) -> Edge-LLM Sentinel anomaly interceptor (RF) | ~94% Intercept
-    ├── [physical_attention](applications/physical_attention) -> Physical KV-Cache attention mechanism (Synergy) | ~95.00%
-    ├── [fingerprint_rec](applications/fingerprint_rec) -> Fingerprint recognition (NIST + ResNet-18) | 92.19%
-    ├── [cifar10_vision](applications/cifar10_vision) -> Bionic vision (CIFAR-10 + ResNet-18) | 90.15%
-    ├── [face_rec](applications/face_rec) -> Yale Faces recognition (ResNet-18 + QAT Head) | 96.67%
-    ├── [optoelectronic_vision](applications/optoelectronic_vision) -> Bionic Sensor-CIM integrated vision (OECT + ResNet-18) | 91.86%
-    ├── [neuromorphic_stdp](applications/neuromorphic_stdp) -> Unsupervised SNN with STDP learning rule (SNN) | 22.78%
-    ├── [neuromorphic_pid](applications/neuromorphic_pid) -> Adaptive PID controller under memristor noise | 55.80%
-    ├── [tactile_eskin](applications/tactile_eskin) -> E-skin multi-class tactile sensor classification (CNN) | 100.00%
-    ├── [neuromorphic_grasp](applications/neuromorphic_grasp) -> Robotic hand slippage reduction control | 98.24%
-    ├── [seizure_detection](applications/seizure_detection) -> Seizure detection from multichannel EEG | 100.00%
-    ├── [generative_aigc](applications/generative_aigc) -> ConvVAE Digit Image Generation & Reconstruction | MSE: 4.85e-3
-    └── [biohybrid_spiking](applications/biohybrid_spiking) -> Spiking coordination in biohybrid networks | 100.00%
-```
+| Capability | Current evidence |
+| --- | --- |
+| XJTU LTP/LTD measurements | 12 single-device sheets; 100 pulses per device; source unit not specified |
+| XJTU device-profile simulation | Profile-driven quantized/noisy training and inference; not fabricated-chip measurements |
+| ECG validation | Public MIT-BIH records; the released headline result uses beat-level five-fold validation, not patient-independent validation |
+| Lifetime compensation | Device-aging simulation; not ten years of physical operation |
+| TOPS/W, area, and latency | Analytical architecture estimates using explicit model assumptions; not cycle-accurate hardware measurements |
+| Literature/knowledge agent | Planned future work, not an implemented platform feature |
 
-### 📦 Installation
+### Measured-data case
 
-To use this platform as an open-source library, clone this repository and run editable pip install in your environment:
+The XJTU profile is aggregated from 12 measured devices, with 50 LTP and 50 LTD pulses per device. The source contains current responses without a stated unit, so the profile retains source metadata and does not claim calibrated absolute conductance.
+
+For the MIT-BIH binary heartbeat task, the recorded five-fold result with seed 42 is:
+
+| Track | Accuracy | Macro-F1 |
+| --- | --- | --- |
+| Floating-point baseline | **98.09% ± 0.51 pp** | 0.9744 |
+| XJTU measured-profile constraints | **97.93% ± 0.51 pp** | 0.9722 |
+
+The accuracy difference is **−0.16 percentage points**: the constrained result is comparable to the baseline, not an improvement over it. The experiment uses 3,776 sampled beats from the 15 locally available MIT-BIH records. Full fold-level results are in [`reports/xjtu_measured_ecg_results.json`](reports/xjtu_measured_ecg_results.json).
+
+A separate five-fold **record-isolated** experiment holds out three MIT-BIH records per fold. It gives **80.04% ± 12.23 pp** for the float baseline and **77.10% ± 14.46 pp** for the measured-profile model (Macro-F1 0.6983 and 0.6651; difference −2.95 pp). This exposes substantial record-to-record variability and is not evidence of patient-independent clinical performance. The two validation protocols are not interchangeable. See [`reports/xjtu_measured_ecg_patient_group_results.json`](reports/xjtu_measured_ecg_patient_group_results.json).
+
+The measured profile supplies the readout's discrete-state count and noise scale. The LTP/LTD polynomial fitting and volatile reservoir use separate modelling paths; this experiment does not establish a complete calibrated device-to-chip model.
+
+## Installation
+
 ```bash
 git clone https://github.com/Leslie360/O-CIMKit.git
 cd O-CIMKit
-pip install -e .
+python3 -m pip install -e .
 ```
 
-After installation, run the automated data preparation script to download standard vision datasets (MNIST, CIFAR-10) and generate lightweight mock data for proprietary medical/physical sensor datasets:
+Run the test suite:
+
 ```bash
-o-cimkit prepare-data
+python3 run_tests.py
 ```
 
-### 🚀 Quick Start (CLI Entry Point)
+`o-cimkit prepare-data` downloads MNIST and CIFAR-10 and creates small example arrays. Other applications require their respective public datasets or explicitly generated mock data. Always distinguish downloaded, measured, and mock data in a report.
 
-You can run any of the 20+ applications directly via the global CLI or `main.py`:
+## Measured-profile reproduction
+
+With the authorized source workbook in `data/devices/` and the MIT-BIH records in `data/datasets/mitdb/`:
+
 ```bash
-# Run sMNIST digit recognition
+python3 profiles/parser.py \
+  --file data/devices/LTP-LTD.xlsx \
+  --name XJTU_Measured_Memristor \
+  --type nonvolatile \
+  --measurement-type current
+
+python3 applications/ecg_cardio/train.py \
+  --dataset mitdb \
+  --epochs 150 \
+  --device-profile XJTU_Measured_Memristor \
+  --validation beat-kfold \
+  --seed 42 \
+  --output-json reports/xjtu_measured_ecg_results.json
+```
+
+To regenerate the dashboard's measured curves and result data after rerunning the experiment:
+
+```bash
+python3 scripts/export_dashboard_data.py
+```
+
+## Application and diagnostic commands
+
+```bash
 o-cimkit run digit_rec
-
-# Run Edge-LLM Sentinel anomaly detection
-o-cimkit run edge_llm
-
-# Run CIFAR-10 vision model for 10 epochs
 o-cimkit run cifar10_vision --epochs 10
-
-# Run generative VAE application
-o-cimkit run generative_aigc --epochs 25
-
-# Run Nano-GPT Large Language Model on Organic Memory
 o-cimkit run cim_nano_gpt
-
-# Run System-Level Architectural Profiler (DAC/ISCA/NeuroSim Metrics)
-o-cimkit profile --app cim_nano_gpt
-
-# Run top-journal comparative benchmark and publish reports
-o-cimkit benchmark --apps cifar10_vision,generative_aigc --epochs 10
-```
-
-To run bionic co-design compilation and self-healing validation on a device profile:
-```bash
-o-cimkit codesign --device FingerMemristor
-```
-
-To generate a premium, high-resolution physical diagnostics datasheet and curves for a device:
-```bash
+o-cimkit benchmark --device FingerMemristor --apps cifar10_vision,ecg_cardio --epochs 3
 o-cimkit diagnose --device FingerMemristor
+o-cimkit codesign --device FingerMemristor
+o-cimkit profile --app cim_nano_gpt
 ```
 
-### 🔧 How to Ingest a New Device Dataset
+The application runner accepts application-specific options after the application name. Profile selection and data-preparation support vary by application; consult the module and its CLI help before a comparative run.
 
-When you get new raw experimental measurements (Excel or TXT file of current/conductance values):
-1. Save the file inside `data/devices/` (e.g., `my_device.xlsx`).
-2. Run the parser:
-   ```bash
-   # For nonvolatile memristors (e.g., 64 discrete states):
-   python profiles/parser.py --file data/devices/my_device.xlsx --name MyMemristor --type nonvolatile --states 64
+## Project structure
 
-   # For volatile short-term decay measurements:
-   python profiles/parser.py --file data/devices/my_device.xlsx --name MyOECT --type volatile
-   ```
-3. A JSON configuration containing all computed parameters will be saved to `profiles/repository/MyMemristor.json`, which can be immediately used by all applications.
-
-### 📈 Boosting Performance (AutoTuner)
-
-We provide an `AutoTuner` module (`core/autotune.py`) that utilizes Optuna (or a grid search fallback) to tune reservoir hyperparameters (spectral radius, input scaling, leaking rate) to automatically boost accuracy for your specific device characteristics:
-```python
-from core.autotune import AutoTuner
-
-# Define your evaluation function returning accuracy
-def evaluate_fn(spectral_radius, input_scale, leaking_rate, ridge_alpha):
-    # Setup your reservoir and evaluate
-    return accuracy
-
-# Tune for 30 trials
-tuner = AutoTuner(target_accuracy_fn=evaluate_fn, n_trials=30)
-best_params, best_accuracy = tuner.tune()
+```text
+core/                 Device-aware layers, quantizers, compiler, and analytical profiler
+profiles/             DeviceProfile schema, experiment parser, and profile repository
+applications/         28 training modules and the offline review dashboard
+scripts/              Data preparation, evaluation, and dashboard-data export
+cli/                  Command-line entry points
+reports/              Reproduction results and model-based comparison reports
+tests/                Unit and parser tests
 ```
-</details>
+
+## Review dashboard
+
+Open [`applications/web_dashboard/index.html`](applications/web_dashboard/index.html) directly in a browser. No web server, external chart package, or font service is required. The page separates team measurements, device simulation, and planned work; measured curves and ECG results are generated from local evidence files.
+
+## Related tools
+
+O-CIMKit complements rather than replaces full analog-array or circuit simulators:
+
+- [IBM AIHWKit](https://aihwkit.readthedocs.io/en/latest/): analog training/inference and hardware-calibrated device presets.
+- [CrossSim](https://cross-sim.sandia.gov/): experiment-derived update models and analog crossbar accuracy simulation.
+- [NeuroSim](https://shimeng.ece.gatech.edu/downloads/): circuit- and architecture-level performance evaluation.
+
+The distinguishing scope of O-CIMKit is an accessible organic-device experiment-to-application workflow, with mixed volatile/nonvolatile models and reviewable research outputs. Quantitative comparisons with these tools require matched devices, models, and validation protocols.
 
 ---
 
-<details>
-<summary><strong>🇨🇳 中文版 (点击展开)</strong></summary>
+## 项目简介
 
-针对**有机光电和忆阻器件**的高硬件感知度、模块化存算一体仿真与神经形态计算评估平台。
+**O-CIMKit：面向有机存算一体器件的垂域科研数据底座与智能分析平台。**
 
-该平台成功将底层的物理器件实验数据测量（支持 raw Excel/TXT 接入）与上层机器学习模型解耦。你可以通过简单的物理配置文件直接对接 19 种不同前沿计算领域的神经网络与储备池算法。
+平台将原始 LTP/LTD 实验表格转化为带来源信息的统一器件画像，接入量化感知训练、储备池计算和可靠性仿真，并输出可复现的应用评测报告。当前仓库包含 **28 个训练模块**，其中已完成的团队实测画像闭环以心电分类为代表；不能将训练入口数量表述为28项实测器件验证成果。
 
-### 📦 安装方式
+### 当前核心证据
 
-支持一键作为 Python 库进行安装和开发：
+- 12颗单器件工作表，每颗100个脉冲，自动聚合为50态画像。
+- 源表未标注单位，保留“原始电流响应”语义，不将其宣称为绝对电导。
+- MIT-BIH 心搏二分类五折结果：浮点基线 **98.09% ± 0.51 pp**，实测画像约束 **97.93% ± 0.51 pp**，差值 **−0.16个百分点**。
+- 该结果来自本地15条公开记录中的3,776个抽样心搏，采用心搏级交叉验证；不是患者独立测试、临床诊断结论或芯片实测。
+- 记录隔离补充五折：浮点基线 **80.04% ± 12.23 pp**，画像约束 **77.10% ± 14.46 pp**，差值 **−2.95个百分点**，宏平均F1分别为0.6983和0.6651；逐折测试记录可核查。该结果揭示跨记录泛化仍需优化，不能与心搏级结果混用。
+- 可靠性为老化模型仿真；能耗、面积和时延为带假设的体系结构估算。
+- 文献检索、参数溯源和科研智能体属于规划能力，不计入当前已实现成果。
+
+### 安装、测试与复现
+
 ```bash
 git clone https://github.com/Leslie360/O-CIMKit.git
 cd O-CIMKit
-pip install -e .
+python3 -m pip install -e .
+python3 run_tests.py
 ```
 
-安装完成后，请运行自动化数据准备脚本。该脚本会自动下载标准视觉数据集（如 MNIST, CIFAR-10），并为那些封闭的医疗/物理专有数据集（如心电图、脑电图）生成轻量级的 Mock 测评数据，确保项目能够**开箱即用**：
+放入经授权的实测工作表和 MIT-BIH 数据后，运行：
+
 ```bash
-o-cimkit prepare-data
+python3 profiles/parser.py --file data/devices/LTP-LTD.xlsx --name XJTU_Measured_Memristor --type nonvolatile --measurement-type current
+python3 applications/ecg_cardio/train.py --dataset mitdb --epochs 150 --device-profile XJTU_Measured_Memristor --validation beat-kfold --seed 42 --output-json reports/xjtu_measured_ecg_results.json
 ```
 
-### 🚀 全局 CLI 命令行快速运行
+详细评测边界见 [`applications/ecg_cardio/README.md`](applications/ecg_cardio/README.md)。完整逐折结果见 [`reports/xjtu_measured_ecg_results.json`](reports/xjtu_measured_ecg_results.json)。
 
-安装完毕后，你可以通过全局命令 `o-cimkit` 极速运行任何模块：
-```bash
-# 运行 sMNIST 手写数字识别
-o-cimkit run digit_rec
+### 离线展示
 
-# 运行大模型边缘前哨异常拦截
-o-cimkit run edge_llm
+直接用浏览器打开 `applications/web_dashboard/index.html`。页面不依赖外部图表或字体服务，支持单器件曲线核查、逐折结果展开和 JSON 下载；`poster.html` 提供独立学术海报版式。
 
-# 指定训练轮数运行 CIFAR-10 仿生视觉系统
-o-cimkit run cifar10_vision --epochs 10
+### 工程与数据许可
 
-# 运行变分自编码器 AIGC 图像生成应用
-o-cimkit run generative_aigc --epochs 25
-
-# 运行最前沿的 Nano-GPT 生成式大模型 (LLM on CIM)
-o-cimkit run cim_nano_gpt
-
-# 一键运行顶刊标准硬件感知对比跑分并输出报告
-o-cimkit benchmark --apps cifar10_vision,generative_aigc --epochs 10
-```
-
-运行硬件感知协同设计编译与在线自愈校验（软硬协同优化）：
-```bash
-o-cimkit codesign --device FingerMemristor
-```
-
-一键绘制物理特性诊断曲线并生成数据手册报告：
-```bash
-o-cimkit diagnose --device FingerMemristor
-```
-
-### 📈 自动超参调优提升性能
-
-我们提供了自动化调优模块 `AutoTuner`（基于 Optuna 实现，无环境时自动退回至高效网格搜索）。它能针对新器件的物理特性（时间常数、非线性度），自动搜索最佳的储层谱半径、输入缩放、泄漏率以及读出层正则化系数，使新器件的一键识别精度最大化。
-
-</details>
+代码许可见 [MIT License](LICENSE)，贡献流程见 [CONTRIBUTING.md](CONTRIBUTING.md)。数据集、实验原始表格和文献内容仍需分别遵守其来源许可与团队公开授权；代码开源不等于这些数据自动获得公开许可。

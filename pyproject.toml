@@ -33,7 +33,7 @@ dependencies = [
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/Leslie360/CIM_application_project"
+"Homepage" = "https://github.com/Leslie360/O-CIMKit"
 
 [tool.setuptools.packages.find]
 where = ["."]

@@ -86,10 +86,8 @@ class OrganicSynapseConv(nn.Conv2d):
                     w_phys = w_phys + torch.randn_like(w_phys) * noise_std_abs
                 w_phys = torch.clamp(w_phys, min=self.phys_min * factor, max=self.phys_max * factor)
             
-        # 3. Map noisy physical conductance back to mathematical domain [-1, 1]
-        phys_min_drift = self.phys_min * factor
-        phys_max_drift = self.phys_max * factor
-        w_norm_noisy = (w_phys - phys_min_drift) / (phys_max_drift - phys_min_drift + 1e-20)
+        # 3. Decode against fixed reference bounds so drift is not normalized away
+        w_norm_noisy = (w_phys - self.phys_min) / (self.phys_max - self.phys_min + 1e-20)
         w_math_noisy = w_norm_noisy * 2.0 - 1.0
         
         # 4. Perform standard convolution with modified weights
@@ -163,11 +161,9 @@ class QATMLPLayer(nn.Linear):
                         w_phys = w_phys + torch.randn_like(w_phys) * noise_std_abs
                     w_phys = torch.clamp(w_phys, min=phys_min * factor, max=phys_max * factor)
                     
-            phys_min_drift = phys_min * factor
-            phys_max_drift = phys_max * factor
-            w_norm_drift = (w_phys - phys_min_drift) / (phys_max_drift - phys_min_drift + 1e-20)
+            w_norm_drift = (w_phys - phys_min) / (phys_max - phys_min + 1e-20)
             w = w_norm_drift * 2.0 - 1.0
-            
+
         return nn.functional.linear(input, w, self.bias)
 
 class PhysicalReservoir:

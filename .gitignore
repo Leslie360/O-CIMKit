@@ -78,3 +78,6 @@ checkpoints/
 # Temporary log files
 *.log
 temp_bench_*.log
+
+# Auto-downloaded demo dataset (fetched on first run)
+tiny_shakespeare.txt

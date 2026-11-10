@@ -1,7 +1,7 @@
 import unittest
 import torch
 import numpy as np
-from core.layers import DynamicOrganicSynapse, SelfHealingCrossbar
+from core.layers import DynamicOrganicSynapse, QATMLPLayer, SelfHealingCrossbar
 from profiles.device_profile import DeviceProfile
 
 class TestLayers(unittest.TestCase):
@@ -25,6 +25,27 @@ class TestLayers(unittest.TestCase):
         
         out_seq = layer(x, return_sequence=True)
         self.assertEqual(out_seq.shape, (2, 15, 5))
+
+    def test_qat_drift_uses_fixed_reference_bounds(self):
+        profile = self.get_mock_profile()
+        profile.is_volatile = False
+        profile.discrete_states_count = 16
+        profile.retention_noise = 0.0
+        layer = QATMLPLayer(in_features=3, out_features=2, device_profile=profile, bias=False)
+        layer.eval()
+        x = torch.tensor([[0.2, -0.4, 0.6]])
+        with torch.no_grad():
+            fresh = layer(x)
+            layer.drift_hours = 100.0
+            aged = layer(x)
+        self.assertFalse(torch.allclose(fresh, aged))
+        self.assertTrue(torch.isfinite(aged).all())
+        quantized = layer.quantizer(layer.weight)
+        factor = 100.0 ** (-0.06)
+        expected_weight = (quantized + 1.0) * factor - 1.0
+        expected_weight += (2.0 * profile.conductance_min / (profile.conductance_max - profile.conductance_min)) * (factor - 1.0)
+        expected = torch.nn.functional.linear(x, expected_weight)
+        self.assertTrue(torch.allclose(aged, expected, atol=1e-6))
 
     def test_self_healing_crossbar(self):
         profile = self.get_mock_profile()

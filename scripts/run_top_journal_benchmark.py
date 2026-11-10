@@ -428,14 +428,7 @@ def main():
     plot_path = os.path.join(project_root, "reports", "top_journal_benchmark.png")
     plt.savefig(plot_path, facecolor=fig.get_facecolor(), edgecolor='none', bbox_inches='tight')
     print(f"✅ Multi-panel benchmark plot saved to: {plot_path}")
-    
-    # Copy plot to user artifacts folder
-    artifact_dir = os.environ.get("OCIMKIT_ARTIFACT_DIR")
-    if artifact_dir and os.path.exists(artifact_dir):
-        import shutil
-        shutil.copy(plot_path, os.path.join(artifact_dir, "top_journal_benchmark.png"))
-        print("✅ Copied benchmark plot to user artifacts.")
-        
+
     # ------------------ GENERATE DETAILED MARKDOWN REPORT ------------------
     report_lines = [
         "# 🔬 Top-Journal Comparative Report: Dynamic Self-Healing for Organic CIM",

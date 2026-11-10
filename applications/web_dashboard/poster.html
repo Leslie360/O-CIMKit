@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O-CIMKit｜学术海报</title>
+    <link rel="stylesheet" href="poster.css">
+</head>
+<body>
+<main class="poster">
+    <header class="poster-header">
+        <div class="header-brand"><span class="logo">O</span><div><strong>O-CIMKit</strong><small>ORGANIC COMPUTING-IN-MEMORY KIT</small></div></div>
+        <div class="header-title">
+            <p>REAL MEASURED DEVICES → TRUSTWORTHY AI EVALUATION</p>
+            <h1>让器件实测数据，直接变成可信的 AI 评测</h1>
+            <h2>面向有机存算一体的垂域科研数据底座与智能分析平台</h2>
+        </div>
+        <div class="header-meta">
+            <span class="meta-label">西安交通大学 · 2026</span>
+            <strong>真实数据闭环已跑通</strong>
+            <span>MIT 开源 · 28 个训练应用</span>
+            <a href="https://github.com/Leslie360/O-CIMKit">github.com/Leslie360/O-CIMKit</a>
+        </div>
+    </header>
+
+    <section class="story-strip">
+        <div class="story-lead"><span>核心问题 / MOTIVATION</span><strong>器件“测得出”，<br>如何快速知道 AI“用得好”？</strong></div>
+        <ol class="story-flow">
+            <li><span class="flow-number">01</span><div><strong>实验测量</strong><small>12 颗器件 · 100 脉冲</small></div><b>团队实测</b></li>
+            <li><span class="flow-number">02</span><div><strong>统一器件画像</strong><small>状态 · 动态范围 · 非线性</small></div><b>自动拟合</b></li>
+            <li><span class="flow-number">03</span><div><strong>物理约束训练</strong><small>QAT · STE · 噪声注入</small></div><b>器件仿真</b></li>
+            <li><span class="flow-number">04</span><div><strong>应用证据报告</strong><small>逐折结果 · 可靠性 · 复现</small></div><b>可复核</b></li>
+        </ol>
+        <div class="story-result"><span>真实案例</span><strong>97.93<small>%</small></strong><p>心搏级内部基准<br>非跨患者泛化指标</p></div>
+    </section>
+
+    <section class="poster-grid">
+        <div class="poster-column">
+            <section class="poster-card measured-card">
+                <div class="card-title"><span>01</span><div><h3>真实器件数据，而非 Mock 曲线</h3><p>REAL MEASURED DEVICE DATA</p></div><b class="tag measured">团队实测</b></div>
+                <p class="card-intro">12 颗有机忆阻器，每颗 50 次增强 + 50 次抑制；细线为单颗，粗线为均值。</p>
+                <svg id="posterMeasured" viewBox="0 0 460 300" role="img" aria-label="12 颗有机忆阻器实测 LTP-LTD 曲线"></svg>
+                <div class="chart-note"><span><i class="blue-line"></i>LTP 增强</span><span><i class="teal-line"></i>LTD 抑制</span><b>源表未标注单位，保留原始电流响应</b></div>
+                <div class="metric-triplet">
+                    <div><strong>50</strong><span>离散状态</span></div>
+                    <div><strong>2.59×</strong><span>响应动态范围</span></div>
+                    <div><strong>0.28%</strong><span>器件间差异 CV</span></div>
+                </div>
+                <p class="source-line">数据源：LTP-LTD.xlsx · 另保留 3 组多器件测量</p>
+            </section>
+
+            <section class="poster-card fit-card">
+                <div class="card-title"><span>02</span><div><h3>从实验曲线到可计算画像</h3><p>AUTOMATIC DEVICE PROFILE</p></div><b class="tag automatic">自动解析</b></div>
+                <div class="fit-content">
+                    <svg id="posterFit" viewBox="0 0 330 250" role="img" aria-label="归一化实测响应与画像拟合曲线"></svg>
+                    <div class="fit-explain">
+                        <strong>统一画像封装四类参数</strong>
+                        <ul><li>状态数与动态范围</li><li>LTP / LTD 三阶非线性</li><li>器件间差异与噪声强度</li><li>来源、脉冲数与测量含义</li></ul>
+                        <code>Δr = a₃r³ + a₂r² + a₁r + a₀</code>
+                        <small>r：归一化原始响应</small>
+                    </div>
+                </div>
+                <div class="profile-output"><span>OUTPUT</span><code>XJTU_Measured_Memristor.json</code><b>直通应用层</b></div>
+                <p class="takeaway">一次拟合，多应用读取；避免为每个任务重复搭建器件模型。</p>
+            </section>
+        </div>
+
+        <div class="poster-column center-column">
+            <section class="poster-card ecg-poster-card">
+                <div class="card-title"><span>03</span><div><h3>真实画像约束下，精度与浮点基线相当</h3><p>END-TO-END VALIDATION · MIT-BIH ECG</p></div><b class="tag simulation">画像驱动仿真</b></div>
+                <div class="ecg-hero-results">
+                    <div><span>浮点基线</span><strong id="posterFloat">98.09<small>%</small></strong><em id="posterFloatStd">±0.51 pp</em></div>
+                    <div class="delta-badge"><span>精度差值</span><strong id="posterDelta">−0.16</strong><small>个百分点</small></div>
+                    <div class="highlight"><span>实测画像约束</span><strong id="posterHardware">97.93<small>%</small></strong><em id="posterHardwareStd">±0.51 pp</em></div>
+                </div>
+                <div class="fold-title"><strong>心搏级五折配对结果</strong><span>同一特征、同一划分、同一训练协议 · 150 轮 / 折</span></div>
+                <svg id="posterFolds" viewBox="0 0 600 210" role="img" aria-label="浮点基线与实测画像约束的五折配对精度"></svg>
+                <div class="fold-legend"><span><i class="dot gray"></i>浮点基线</span><span><i class="dot teal"></i>实测画像约束</span><b>n = 3,776 · 15 条记录 · 心搏级 5-fold · seed = 42</b></div>
+                <div class="validation-detail"><span>Macro-F1　浮点 <b id="posterFloatF1">0.9744</b>　/　实测画像 <b id="posterHardwareF1">0.9722</b></span><span>完整证据：xjtu_measured_ecg_results.json</span></div>
+                <p class="takeaway strong-takeaway">画像约束与浮点基线相当，验证了数据链路可用性；心搏级划分不证明跨患者泛化或临床性能。</p>
+                <p class="source-line" id="posterPatientNote">记录隔离补充：画像约束 77.10%，浮点基线 80.04%（−2.95 pp）；跨记录泛化仍需优化。</p>
+            </section>
+
+            <section class="poster-card applications-poster-card">
+                <div class="card-title"><span>04</span><div><h3>1 项实测画像闭环，28 个模块可扩展</h3><p>ONE MEASURED-DATA CASE, EXTENSIBLE TRAINING MODULES</p></div><b class="tag automatic">跨应用接口</b></div>
+                <div class="application-matrix">
+                    <article><header><span>生命健康</span><b>4 项</b></header><strong>97.93%</strong><p>心电分类 · 实测画像</p><small>睡眠脑电 · 癫痫检测 · PPG 心率</small></article>
+                    <article><header><span>工业与感知</span><b>7 项</b></header><strong>99.80%</strong><p>轴承故障 · 器件仿真</p><small>触觉 / 嗅觉 · 抓取 · 具身控制</small></article>
+                    <article><header><span>视觉与边缘</span><b>5 项</b></header><strong>90.15%</strong><p>CIFAR-10 · 器件仿真</p><small>光电视觉 · 人脸 / 指纹 · 事件手势</small></article>
+                    <article><header><span>神经形态与前沿</span><b>12 项</b></header><strong>约 94%</strong><p>Edge-LLM 前哨拦截</p><small>物理注意力 · Nano-GPT · SNN / RC</small></article>
+                </div>
+                <div class="application-foot"><span><b>1</b> 项实测画像闭环 · <b>28</b> 个训练模块</span><span>能耗倍数为系统模型估算，非芯片实测</span></div>
+                <div class="workflow-band"><span>统一入口</span><code>o-cimkit run &lt;app&gt;</code><code>o-cimkit benchmark --device &lt;profile&gt;</code></div>
+                <div class="output-band"><span>精度对照</span><span>物理诊断</span><span>可靠性分析</span><span>能效剖析</span></div>
+            </section>
+        </div>
+
+        <div class="poster-column">
+            <section class="poster-card reliability-poster-card">
+                <div class="card-title"><span>05</span><div><h3>面向长期运行的无监督统计补偿</h3><p>10-YEAR AGING SIMULATION · YALE FACES</p></div><b class="tag simulation">老化仿真</b></div>
+                <p class="card-intro">无标签在线统计对齐，无需重新训练；十年期仿真中保持 100% 精度。</p>
+                <div id="posterReliability" class="poster-bars"></div>
+                <div class="reliability-highlight"><span>统计补偿 − 全局缩放</span><strong>+13.33<small> pp</small></strong><p>100.00% vs 86.67%</p></div>
+                <div class="equation">ẑ = <span>σ<sub>0</sub> / σ<sub>t</sub></span> · (z<sub>t</sub> − μ<sub>t</sub>) + μ<sub>0</sub></div>
+                <p class="source-line">公开 Yale 数据 + 器件老化模型；小样本方法验证，非十年实物运行。</p>
+            </section>
+
+            <section class="poster-card innovation-card">
+                <div class="card-title"><span>06</span><div><h3>从仿真器到科研智能闭环</h3><p>METHOD & ENGINEERING</p></div></div>
+                <ol class="innovation-list">
+                    <li><span>A</span><div><strong>数据解耦</strong><p>原始 Excel / TXT → 统一画像 → 多应用</p></div></li>
+                    <li><span>B</span><div><strong>物理保真</strong><p>量化感知训练 + STE + 非理想特性注入</p></div></li>
+                    <li><span>C</span><div><strong>自动评估</strong><p>调优、诊断、可靠性与能效报告一体输出</p></div></li>
+                </ol>
+                <div class="quality-row"><span>17 项测试通过</span><span>持续集成</span><span>MIT 开源</span></div>
+            </section>
+
+            <section class="poster-card roadmap-poster-card">
+                <div class="card-title"><span>07</span><div><h3>下一步：形成“数据 + 知识”双底座</h3><p>FUTURE WORK · PLANNED</p></div></div>
+                <div class="roadmap-list">
+                    <div><span>数据层</span><p>多批次实测数据库<br>保持 / 弛豫特性与开放画像标准</p></div>
+                    <div><span>智能层</span><p>垂域文献科研智能体<br>检索、参数提取与可追溯综述</p></div>
+                    <div><span>硬件层</span><p>流片与实物测试校准<br>持续缩小仿真—实测差距</p></div>
+                </div>
+            </section>
+
+            <section class="poster-conclusion">
+                <span>TAKE-HOME MESSAGE</span>
+                <strong>让实验数据不再沉睡，<br>让器件研究更快走向智能应用。</strong>
+                <p>已建成真实数据可进入、结果可复现、应用可扩展的科研链路；更多批次与硬件实测是下一阶段重点。</p>
+            </section>
+        </div>
+    </section>
+
+    <footer class="poster-footer">
+        <div><strong>证据与复现</strong><span>[1] 团队实测：LTP-LTD.xlsx（12 颗单器件）</span><span>[2] MIT-BIH：Moody & Mark, IEEE EMBS Mag., 2001</span><span>[3] 心搏级与记录隔离逐折 JSON 证据</span></div>
+        <div class="footer-right"><span>所有图表由本地原始数据与结果自动生成 · 无外部图表服务</span><strong>O-CIMKit · MIT License · 2026-11-10</strong></div>
+    </footer>
+</main>
+<script src="data.js"></script>
+<script src="poster.js"></script>
+</body>
+</html>

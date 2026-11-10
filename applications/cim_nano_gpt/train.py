@@ -1,7 +1,7 @@
 import os
 import urllib.request
 import torch
-from .model import CIMNanoGPT
+from applications.cim_nano_gpt.model import CIMNanoGPT
 from profiles.device_profile import DeviceProfile
 import json
 

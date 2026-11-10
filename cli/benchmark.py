@@ -3,6 +3,8 @@ import sys
 import subprocess
 import re
 import json
+import shutil
+import tempfile
 
 from profiles.device_profile import DeviceProfile
 
@@ -41,28 +43,29 @@ REFERENCE_ACCURACIES = {
 }
 
 
-def execute_silent_evaluation(app_name, script_path, epochs, extra_args):
+def execute_silent_evaluation(app_name, script_path, epochs, extra_args, profile_env=None):
     """
     Runs a single benchmark item and parses its final accuracy/NRMSE using file redirection to prevent pipe deadlocks.
-    
+
     Args:
         app_name (str): Name of the application.
         script_path (str): Path to the training script.
         epochs (int): Number of epochs.
         extra_args (list): Additional arguments.
+        profile_env (dict): Optional subprocess environment with an isolated profile overlay.
     """
     project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     abs_script_path = os.path.abspath(os.path.join(project_root, script_path))
-    
+
     cmd = [sys.executable, "-u", abs_script_path, "--epochs", str(epochs)] + extra_args
     print(f"  [RUNNING] {app_name} for {epochs} epochs...")
-    
+
     temp_log_path = os.path.join(project_root, f"temp_bench_{app_name}.log")
-    
+
     try:
         # Run subprocess and redirect stdout/stderr to a temporary file
         with open(temp_log_path, "w", encoding="utf-8") as f_log:
-            subprocess.run(cmd, stdout=f_log, stderr=subprocess.STDOUT, check=True)
+            subprocess.run(cmd, stdout=f_log, stderr=subprocess.STDOUT, check=True, env=profile_env)
             
         last_acc = "N/A"
         last_nrmse = "N/A"
@@ -160,26 +163,14 @@ def run_benchmark(device_path, apps_list, epochs):
     
     targets_to_override = volatile_targets if custom_profile.is_volatile else nonvolatile_targets
     
-    # 3. Create backups
-    backups = {}
-    print("💾 Backing up default repository profiles...")
+    # 3. Expose an isolated overlay only to benchmark subprocesses.
+    overlay_tempdir = tempfile.TemporaryDirectory(prefix="o-cimkit-profiles-")
     for target in targets_to_override:
-        target_path = os.path.join(repository_dir, target)
-        if os.path.exists(target_path):
-            with open(target_path, 'r', encoding='utf-8') as f:
-                backups[target] = f.read()
-                
-    # 4. Virtual Device Overlay (Write custom profile content to target default files)
-    print(f"⚡ Applying Virtual Device Overlay ({len(targets_to_override)} targets)...")
+        shutil.copyfile(device_path, os.path.join(overlay_tempdir.name, target))
+    profile_env = os.environ.copy()
+    profile_env["OCIMKIT_PROFILE_OVERLAY_DIR"] = overlay_tempdir.name
+    print(f"Using an isolated device overlay ({len(targets_to_override)} targets); source profiles remain unchanged.")
     try:
-        # Load the custom file content
-        with open(device_path, 'r', encoding='utf-8') as f:
-            custom_content = f.read()
-            
-        for target in targets_to_override:
-            target_path = os.path.join(repository_dir, target)
-            with open(target_path, 'w', encoding='utf-8') as f:
-                f.write(custom_content)
                 
         # 5. Run evaluations
         app_map = {
@@ -252,7 +243,7 @@ def run_benchmark(device_path, apps_list, epochs):
                 script, extra_args = item
             else:
                 script, extra_args = item, []
-            results[app] = execute_silent_evaluation(app, script, epochs, extra_args)
+            results[app] = execute_silent_evaluation(app, script, epochs, extra_args, profile_env=profile_env)
             
         # 6. Generate Report
         report_lines = []
@@ -260,7 +251,7 @@ def run_benchmark(device_path, apps_list, epochs):
         report_lines.append(f"**Device Profile Evaluated**: `{custom_profile.device_name}` (Memory Type: `{'Volatile' if custom_profile.is_volatile else 'Non-Volatile'}`)")
         report_lines.append(f"**Benchmark Epochs**: {epochs}")
         report_lines.append("\n## 📈 Performance Summary Table\n")
-        report_lines.append("| Application Task | Benchmark Accuracy | Platform SOTA Reference |")
+        report_lines.append("| Application Task | Benchmark Result | Historical Platform Reference (not external SOTA) |")
         report_lines.append("| :--- | :--- | :--- |")
         
         for app, acc in results.items():
@@ -284,11 +275,6 @@ def run_benchmark(device_path, apps_list, epochs):
         print("=" * 60)
         
     finally:
-        # 7. Restore backups under all circumstances
-        print("♻️ Restoring default repository profiles from backups...")
-        for target, content in backups.items():
-            target_path = os.path.join(repository_dir, target)
-            with open(target_path, 'w', encoding='utf-8') as f:
-                f.write(content)
-        print("✨ Environment fully restored.")
+        overlay_tempdir.cleanup()
+        print("Isolated profile overlay removed; repository profiles were not modified.")
 

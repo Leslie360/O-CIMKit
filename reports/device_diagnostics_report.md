@@ -1,22 +1,26 @@
-# 💎 Bionic Device Physical Datasheet: FingerMemristor
-**Device Type**: `NONVOLATILE` | **Memory Category**: `Non-Volatile`
-**Fitted Date**: 2026-06-15
+# Bionic Device Physical Datasheet: XJTU_Measured_Memristor
+**Device Type**: `MEMRISTOR` | **Memory Category**: `Non-Volatile`
+**Generated**: 2026-11-09
 
-## 📊 1. Core Physical Parameters
+**Source File**: `LTP-LTD.xlsx` | **Measured Devices**: 12
+**Source Signal**: current | **Unit**: not specified in source
+
+## 1. Core Physical Parameters
 
 | Parameter | Physical Value | Description |
 | :--- | :--- | :--- |
-| **Conductance Min ($G_{min}$)** | 2.7100e-11 S | Minimum physical state conductance |
-| **Conductance Max ($G_{max}$)** | 4.5900e-10 S | Maximum physical state conductance |
-| **Device Noise Ratio** | 2.00% | Cumulative D2D/C2C process variance |
-| **Discrete States Count** | 28 | Number of hardware conductance levels |
+| **Current Response Min ($I_{min}$)** | 1.1102e+00 | Minimum measured source response |
+| **Current Response Max ($I_{max}$)** | 2.8803e+00 | Maximum measured source response |
+| **Device Noise Ratio** | 0.28% | Measured D2D CV at the final LTP pulse |
+| **Discrete States Count** | 50 | Number of normalized response levels |
 | **Volatility Decay ($\tau$)** | Infinite | Dynamic relaxation time constant |
 
-## 🛠️ 2. Non-Linearity Coefficients (LTP/LTD Slope Polynomials)
-$$\Delta G_{LTP} = -0.0168 \cdot G^3 + 0.1139 \cdot G^2 + -0.1494 \cdot G + 0.0807$$
-$$\Delta G_{LTD} = 0.3689 \cdot G^3 + -0.4033 \cdot G^2 + -0.0319 \cdot G + -0.0060$$
+## 2. Non-Linearity Coefficients (LTP/LTD Slope Polynomials)
+The fitted variable $r$ is the min-max normalized source response; coefficients describe normalized updates, not absolute conductance derivatives.
+$$\Delta r_{LTP} = -0.3790 \cdot r^3 + 0.7717 \cdot r^2 + -0.5197 \cdot r + 0.1312$$
+$$\Delta r_{LTD} = -0.2161 \cdot r^3 + 0.1816 \cdot r^2 + -0.0695 \cdot r + -0.0050$$
 
-## 📈 3. Physical Diagnostic Visualization
+## 3. Physical Diagnostic Visualization
 ![Device Diagnostic Plots](device_diagnostics.png)
 
 ---

@@ -225,13 +225,6 @@ def main():
     plt.savefig(plot_path, facecolor=fig.get_facecolor(), edgecolor='none', bbox_inches='tight')
     print(f"✅ Generative comparison plot saved to: {plot_path}")
 
-    # Copy to user artifacts folder
-    artifact_dir = os.environ.get("OCIMKIT_ARTIFACT_DIR")
-    if artifact_dir and os.path.exists(artifact_dir):
-        import shutil
-        shutil.copy(plot_path, os.path.join(artifact_dir, "generative_aigc_comparison.png"))
-        print("✅ Copied generative comparison plot to user artifacts.")
-
     # 7. Generate Detailed Report
     report_lines = [
         "# 🎨 Generative AIGC on CIM: Variational Autoencoder (VAE) Reliability Study",
