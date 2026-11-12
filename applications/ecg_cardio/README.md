@@ -34,6 +34,8 @@
 
 差值为−2.95个百分点。每折测试记录均有正常与异常心搏，训练与测试记录零重叠；逐折记录号、类别分布和完整结果见 `reports/xjtu_measured_ecg_patient_group_results.json`。结果反映明显的记录间差异，说明跨记录泛化仍需改进；两种划分协议不能混用，也不能据此宣称临床或患者独立性能。
 
+增加 `--export-predictions` 后，还会输出全部留出预测、混淆矩阵及正常/异常心搏实例。合并3,776个留出心搏时，浮点与画像约束的样本加权准确率分别为 **78.42% / 75.53%**，正常召回率分别为78.53% / 76.52%，异常召回率分别为78.07% / 72.56%。各折等权均值与合并预测采用不同统计口径，不应当作矛盾。
+
 ## 复现命令
 
 ```bash
@@ -61,7 +63,8 @@ python3 applications/ecg_cardio/train.py \
   --device-profile XJTU_Measured_Memristor \
   --validation patient-group-kfold \
   --seed 42 \
-  --output-json reports/xjtu_measured_ecg_patient_group_results.json
+  --output-json reports/xjtu_measured_ecg_patient_group_results.json \
+  --export-predictions
 ```
 
 参数：
@@ -71,6 +74,7 @@ python3 applications/ecg_cardio/train.py \
 - `--validation`：数据划分方式；`beat-kfold` 用于复现上述历史基线，`patient-group-kfold` 按MIT-BIH记录隔离训练与测试。
 - `--seed`：模型优化和数据加载随机种子，默认42；心搏级划分固定为42以保持历史结果可复现。
 - `--output-json`：保存每折准确率、宏平均F1、样本数、验证协议和画像来源。
+- `--export-predictions`：额外保存全部留出预测CSV、混淆矩阵及真实心搏实例，供网页和申报图共用。
 
 ## 结果解释边界
 

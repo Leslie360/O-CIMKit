@@ -1,8 +1,15 @@
+import json
 import unittest
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
 import numpy as np
 
-from applications.ecg_cardio.train import make_validation_splits, train_and_evaluate_ecg
+from applications.ecg_cardio.train import (
+    export_prediction_evidence,
+    make_validation_splits,
+    train_and_evaluate_ecg,
+)
 from profiles.device_profile import DeviceProfile
 
 
@@ -35,6 +42,45 @@ class TestECGValidation(unittest.TestCase):
             self.assertEqual(fold["test_record_count"], 3)
             self.assertEqual(fold["test_class_counts"], {"0": 24, "1": 6})
             self.assertEqual(len(fold["test_records"]), 3)
+
+    def test_prediction_records_cover_each_held_out_sample_once(self):
+        records = []
+        train_and_evaluate_ecg(
+            self.X, self.y, out_classes=2, hidden_dim=8, epochs=1,
+            groups=self.groups, validation="patient-group-kfold",
+            prediction_records=records, model_name="float_baseline",
+        )
+        self.assertEqual(len(records), len(self.y))
+        self.assertEqual({record["sample_index"] for record in records}, set(range(len(self.y))))
+        for record in records:
+            self.assertAlmostEqual(record["normal_score"] + record["abnormal_score"], 1.0, places=6)
+            self.assertEqual(record["record_id"], self.groups[record["sample_index"]])
+
+    def test_evidence_export_contains_confusion_and_real_inputs(self):
+        records = []
+        for sample_index, class_index in enumerate([0, 0, 1, 1]):
+            for model_name in ["float_baseline", "measured_device_simulation"]:
+                records.append({
+                    "sample_index": sample_index,
+                    "fold": 1,
+                    "record_id": f"record-{sample_index}",
+                    "model": model_name,
+                    "y_true": class_index,
+                    "y_pred": class_index,
+                    "normal_score": 0.9 if class_index == 0 else 0.1,
+                    "abnormal_score": 0.1 if class_index == 0 else 0.9,
+                })
+        waveforms = np.arange(4 * 180).reshape(4, 180)
+        with TemporaryDirectory() as directory:
+            output = Path(directory) / "report.json"
+            evidence = export_prediction_evidence(output, records, waveforms)
+            self.assertEqual(evidence["models"]["measured_device_simulation"]["support"], [2, 2])
+            self.assertEqual(evidence["models"]["measured_device_simulation"]["accuracy_percent"], 100.0)
+            self.assertEqual(len(evidence["examples"]), 2)
+            self.assertEqual(len(evidence["examples"][0]["waveform"]), 180)
+            self.assertTrue((output.parent / "predictions.csv").is_file())
+            saved = json.loads((output.parent / "prediction_examples.json").read_text())
+            self.assertEqual(saved["selection_rule"], evidence["selection_rule"])
 
 
 if __name__ == "__main__":

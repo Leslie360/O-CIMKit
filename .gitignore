@@ -67,6 +67,7 @@ venv.bak/
 Thumbs.db
 
 # Project-specific datasets and weights
+data/datasets/mitdb/
 data/datasets/mnist/
 data/datasets/cifar10/
 data/datasets/yale_faces/
@@ -81,3 +82,6 @@ temp_bench_*.log
 
 # Auto-downloaded demo dataset (fetched on first run)
 tiny_shakespeare.txt
+
+# Local web-platform uploads and training jobs
+data/platform_jobs/

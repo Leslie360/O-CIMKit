@@ -1,0 +1,12 @@
+MIT-BIH Arrhythmia Database
+Source: https://physionet.org/content/mitdb/1.0.0/
+License: Open Data Commons Attribution License (ODC-BY) v1.0
+License URI: https://www.physionet.org/content/mitdb/view-license/1.0.0/
+
+This package contains information from the MIT-BIH Arrhythmia Database,
+which is made available under the ODC Attribution License.
+
+O-CIMKit uses the public records 100, 101, 103, 105, 106, 108, 109, 111,
+112, 113, 114, 115, 116, 117, and 118 for its documented research example.
+The database and its contents are separate from the O-CIMKit source-code
+MIT license and from the team-owned experimental device workbook.

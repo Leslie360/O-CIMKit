@@ -11,7 +11,7 @@ O-CIMKit connects experimental LTP/LTD measurements, reusable device profiles, h
 - **Experiment ingestion:** Excel/TXT input, multi-device aggregation, source metadata, LTP/LTD fitting, and device-to-device endpoint variation.
 - **Device-aware models:** quantization-aware layers, volatile reservoir dynamics, nonlinear-update approximations, and output-statistics drift compensation.
 - **Application catalog:** 28 directories containing `train.py` modules covering biomedical signals, sensing, vision, control, and generative modelling. The catalog size is not a claim that all modules have been rerun with the XJTU measured profile.
-- **Research outputs:** per-fold JSON results, diagnostic plots, cross-application evaluation, and an offline SVG-based review dashboard.
+- **Research outputs:** per-fold JSON results, held-out prediction CSV files, confusion matrices, real heartbeat examples, and a local web platform for data ingestion, training, visualization, analysis, and export.
 
 ### Evidence boundaries
 
@@ -38,6 +38,8 @@ For the MIT-BIH binary heartbeat task, the recorded five-fold result with seed 4
 The accuracy difference is **−0.16 percentage points**: the constrained result is comparable to the baseline, not an improvement over it. The experiment uses 3,776 sampled beats from the 15 locally available MIT-BIH records. Full fold-level results are in [`reports/xjtu_measured_ecg_results.json`](reports/xjtu_measured_ecg_results.json).
 
 A separate five-fold **record-isolated** experiment holds out three MIT-BIH records per fold. It gives **80.04% ± 12.23 pp** for the float baseline and **77.10% ± 14.46 pp** for the measured-profile model (Macro-F1 0.6983 and 0.6651; difference −2.95 pp). This exposes substantial record-to-record variability and is not evidence of patient-independent clinical performance. The two validation protocols are not interchangeable. See [`reports/xjtu_measured_ecg_patient_group_results.json`](reports/xjtu_measured_ecg_patient_group_results.json).
+
+The released evidence also includes 7,552 held-out model predictions, confusion matrices, and real heartbeat inputs. Pooling all 3,776 held-out beats gives **78.42%** and **75.53%** sample-weighted accuracy respectively. These are distinct from the **80.04%** and **77.10%** means that weight each fold equally; the interface reports both rather than treating them as contradictory. See [`reports/xjtu_measured_ecg_patient_group_predictions.csv`](reports/xjtu_measured_ecg_patient_group_predictions.csv) and [`reports/xjtu_measured_ecg_patient_group_prediction_examples.json`](reports/xjtu_measured_ecg_patient_group_prediction_examples.json).
 
 The measured profile supplies the readout's discrete-state count and noise scale. The LTP/LTD polynomial fitting and volatile reservoir use separate modelling paths; this experiment does not establish a complete calibrated device-to-chip model.
 
@@ -102,16 +104,25 @@ The application runner accepts application-specific options after the applicatio
 ```text
 core/                 Device-aware layers, quantizers, compiler, and analytical profiler
 profiles/             DeviceProfile schema, experiment parser, and profile repository
-applications/         28 training modules and the offline review dashboard
+applications/         28 training modules, the local web engine, and browser interfaces
 scripts/              Data preparation, evaluation, and dashboard-data export
 cli/                  Command-line entry points
 reports/              Reproduction results and model-based comparison reports
-tests/                Unit and parser tests
+tests/                Unit, parser, prediction-evidence, and web-platform tests
 ```
 
-## Review dashboard
+## Local research platform and read-only dashboard
 
-Open [`applications/web_dashboard/index.html`](applications/web_dashboard/index.html) directly in a browser. No web server, external chart package, or font service is required. The page separates team measurements, device simulation, and planned work; measured curves and ECG results are generated from local evidence files.
+Prepare the public application records and start the local research platform:
+
+```bash
+python3 scripts/download_ecg_data.py
+python3 applications/web_platform/server.py --open
+```
+
+Open `http://127.0.0.1:8765/` if the browser does not open automatically. The workbench accepts `.xlsx`, `.csv`, and `.txt` device workbooks, generates an isolated profile, runs the actual PyTorch ECG experiment in a background job, and displays real heartbeat predictions, confusion matrices, per-class recall, fold evidence, and generated analysis. Reports, profiles, prediction CSV files, and example inputs can be downloaded. Uploaded files and job outputs stay under `data/platform_jobs/`; source profiles are not overwritten. The server binds to `127.0.0.1` and adds no web framework dependency.
+
+Opening [`applications/web_dashboard/index.html`](applications/web_dashboard/index.html) directly, or viewing the GitHub Pages site, provides a **read-only evidence mode** using the same published result files. It does not pretend to train on a static host. [`evidence.html`](applications/web_dashboard/evidence.html) retains the original review dashboard and `poster.html` provides the academic poster.
 
 ## Related tools
 
@@ -141,28 +152,34 @@ The distinguishing scope of O-CIMKit is an accessible organic-device experiment-
 - 可靠性为老化模型仿真；能耗、面积和时延为带假设的体系结构估算。
 - 文献检索、参数溯源和科研智能体属于规划能力，不计入当前已实现成果。
 
+- 记录隔离预测同时公开混淆矩阵、逐心搏预测和真实输入实例。合并3,776个留出心搏的样本加权准确率为浮点 **78.42%**、画像约束 **75.53%**；与各折等权的 **80.04% / 77.10%** 属于不同统计口径，平台分别显示。
+
 ### 安装、测试与复现
 
 ```bash
 git clone https://github.com/Leslie360/O-CIMKit.git
 cd O-CIMKit
 python3 -m pip install -e .
+python3 scripts/download_ecg_data.py
 python3 run_tests.py
+python3 applications/web_platform/server.py --open
 ```
 
-放入经授权的实测工作表和 MIT-BIH 数据后，运行：
+浏览器打开 `http://127.0.0.1:8765/` 后，可上传器件工作表、预览画像、设置协议并启动真实训练。结果页提供真实心搏实例、混淆矩阵、逐折结果、自动分析和文件下载。上传数据与任务文件仅保存在本机 `data/platform_jobs/`，不覆盖原始画像，也不依赖外部 Web 框架。
+
+命令行复现仍可运行：
 
 ```bash
 python3 profiles/parser.py --file data/devices/LTP-LTD.xlsx --name XJTU_Measured_Memristor --type nonvolatile --measurement-type current
-python3 applications/ecg_cardio/train.py --dataset mitdb --epochs 150 --device-profile XJTU_Measured_Memristor --validation beat-kfold --seed 42 --output-json reports/xjtu_measured_ecg_results.json
+python3 applications/ecg_cardio/train.py --dataset mitdb --epochs 150 --device-profile XJTU_Measured_Memristor --validation patient-group-kfold --seed 42 --output-json reports/xjtu_measured_ecg_patient_group_results.json --export-predictions
 ```
 
-详细评测边界见 [`applications/ecg_cardio/README.md`](applications/ecg_cardio/README.md)。完整逐折结果见 [`reports/xjtu_measured_ecg_results.json`](reports/xjtu_measured_ecg_results.json)。
+详细评测边界见 [`applications/ecg_cardio/README.md`](applications/ecg_cardio/README.md)。记录隔离完整结果见 [`reports/xjtu_measured_ecg_patient_group_results.json`](reports/xjtu_measured_ecg_patient_group_results.json)。
 
 ### 离线展示
 
-直接用浏览器打开 `applications/web_dashboard/index.html`。页面不依赖外部图表或字体服务，支持单器件曲线核查、逐折结果展开和 JSON 下载；`poster.html` 提供独立学术海报版式。
+直接打开 `applications/web_dashboard/index.html` 可进入只读成果模式，展示同一份真实结果数据，不伪装成静态网站训练。原评审展示保留在 `evidence.html`，独立海报为 `poster.html`。需要上传和训练时，请使用上述本地服务；离线评审包同时提供代码、示例器件表和所需 MIT-BIH 记录。
 
 ### 工程与数据许可
 
-代码许可见 [MIT License](LICENSE)，贡献流程见 [CONTRIBUTING.md](CONTRIBUTING.md)。数据集、实验原始表格和文献内容仍需分别遵守其来源许可与团队公开授权；代码开源不等于这些数据自动获得公开许可。
+代码许可见 [MIT License](LICENSE)，贡献流程见 [CONTRIBUTING.md](CONTRIBUTING.md)。[MIT-BIH Arrhythmia Database](https://physionet.org/content/mitdb/1.0.0/) 按 [ODC-BY 1.0](https://www.physionet.org/content/mitdb/view-license/1.0.0/) 署名使用，许可说明同时保留在 `data/datasets/MITDB_LICENSE.txt`。实验原始表格和文献内容仍需分别遵守其来源许可与团队公开授权；代码开源不等于这些数据自动获得公开许可。
