@@ -41,7 +41,7 @@ A separate five-fold **record-isolated** experiment holds out three MIT-BIH reco
 
 The released evidence also includes 7,552 held-out model predictions, confusion matrices, and real heartbeat inputs. Pooling all 3,776 held-out beats gives **78.42%** and **75.53%** sample-weighted accuracy respectively. These are distinct from the **80.04%** and **77.10%** means that weight each fold equally; the interface reports both rather than treating them as contradictory. See [`reports/xjtu_measured_ecg_patient_group_predictions.csv`](reports/xjtu_measured_ecg_patient_group_predictions.csv) and [`reports/xjtu_measured_ecg_patient_group_prediction_examples.json`](reports/xjtu_measured_ecg_patient_group_prediction_examples.json).
 
-The measured profile supplies the readout's discrete-state count and noise scale. The LTP/LTD polynomial fitting and volatile reservoir use separate modelling paths; this experiment does not establish a complete calibrated device-to-chip model.
+The measured profile supplies the readout's discrete-state count and response range. The device-to-device variation is retained as profile metadata but is not injected into this ECG readout. The LTP/LTD polynomial fitting and volatile reservoir use separate modelling paths; this experiment does not establish a complete calibrated device-to-chip model.
 
 ## Installation
 
