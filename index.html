@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="O-CIMKit 本地科研平台：导入器件实验数据，生成画像，执行真实训练，查看心电识别实例、混淆矩阵与自动分析。">
+    <meta name="description" content="O-CIMKit 本地科研平台：导入器件实验数据，生成画像，执行训练，查看心电识别实例、混淆矩阵与自动分析。">
     <title>O-CIMKit｜器件数据智能分析工作台</title>
     <link rel="stylesheet" href="platform.css">
 </head>
@@ -24,7 +24,7 @@
 
 <main class="workspace">
     <div class="workspace-heading">
-        <div><p class="overline">RESEARCH WORKSPACE</p><h1>器件数据智能分析工作台</h1><p>导入实验工作表，生成统一器件画像，执行真实训练并核查每一个分类结果。</p></div>
+        <div><p class="overline">RESEARCH WORKSPACE</p><h1>器件数据智能分析工作台</h1><p>导入实验工作表，生成统一器件画像，执行训练并核查每一个分类结果。</p></div>
         <div class="workspace-boundary"><strong>当前任务</strong><span>MIT-BIH 正常 / 异常心搏二分类</span></div>
     </div>
 
@@ -81,7 +81,7 @@
             <label>验证协议<select id="validation"><option value="patient-group-kfold">记录隔离五折（推荐）</option><option value="beat-kfold">心搏级内部五折</option></select></label>
             <label>每折训练轮数<input id="epochs" type="number" min="1" max="300" value="150"></label>
             <label>随机种子<input id="seed" type="number" min="0" max="2147483647" value="42"></label>
-            <button class="button primary" id="startTraining" type="button" disabled>开始真实训练</button>
+            <button class="button primary" id="startTraining" type="button" disabled>开始训练</button>
         </div>
         <div class="training-caption"><span id="trainingHint">请先连接本地引擎并生成器件画像</span><span>画像约束属于器件仿真，不是芯片实测</span></div>
         <div class="job-progress" id="jobProgress" hidden>
@@ -94,7 +94,7 @@
 
     <section class="results-section" id="resultsSection" aria-labelledby="resultsTitle">
         <div class="results-heading">
-            <div><p class="overline">REAL OUTPUTS</p><h2 id="resultsTitle">真实识别结果</h2><p id="resultContext">团队样例 · 记录隔离五折 · 3,776 个留出心搏</p></div>
+            <div><p class="overline">REAL OUTPUTS</p><h2 id="resultsTitle">分类结果与分析</h2><p id="resultContext">团队样例 · 记录隔离五折 · 3,776 个留出心搏</p></div>
             <span class="tag success" id="resultSource">已验证样例</span>
         </div>
         <div class="metric-grid">
@@ -113,7 +113,7 @@
         </div>
 
         <div class="tab-panel" id="examplesPanel" role="tabpanel">
-            <div class="panel-intro"><h3>输入一段真实心电，平台输出正常 / 异常</h3><p>示例均来自未参与对应折训练的记录；预测标签与原始输入一并公开，不用概念图代替结果。</p></div>
+            <div class="panel-intro"><h3>输入一段真实心电，平台输出正常 / 异常</h3><p>示例来自未参与对应折训练的记录，同时公开输入序列与预测标签。</p></div>
             <div class="example-grid" id="exampleGrid"></div>
         </div>
         <div class="tab-panel" id="confusionPanel" role="tabpanel" hidden>
@@ -132,13 +132,13 @@
             <div class="boundary-note"><strong>平台定位</strong><p>心电分类用于验证“器件实测数据 → 器件画像 → 模型训练 → 结果报告”的科研链路，不构成临床诊断建议。</p></div>
         </div>
         <div class="tab-panel" id="downloadsPanel" role="tabpanel" hidden>
-            <div class="panel-intro"><h3>结果不是截图，而是可复查的数据文件</h3><p>下载画像、汇总报告、逐心搏预测和示例输入，可在其他工具中继续分析。</p></div>
+            <div class="panel-intro"><h3>数据文件与分析结果下载</h3><p>画像、评测报告、逐心搏预测和实例均可下载，便于后续分析和复核。</p></div>
             <div class="download-grid" id="downloadGrid"></div>
         </div>
     </section>
 </main>
 
-<footer class="app-footer"><div><strong>O-CIMKit · Organic Computing-in-Memory Kit</strong><p>真实训练仅在本地 Python 引擎运行；GitHub Pages 展示相同证据文件的只读结果。</p></div><a href="evidence.html">查看成果证据与复现说明</a></footer>
+<footer class="app-footer"><div><strong>O-CIMKit · Organic Computing-in-Memory Kit</strong><p>训练仅在本地 Python 引擎运行；GitHub Pages 展示相同证据文件的只读结果。</p></div><a href="evidence.html">查看成果证据与复现说明</a></footer>
 <script src="data.js"></script>
 <script src="platform.js"></script>
 </body>

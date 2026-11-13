@@ -274,7 +274,7 @@ function setControls() {
     $("dropzone").classList.toggle("disabled", !enabled);
     ["validation", "epochs", "seed", "measurementUnit"].forEach(id => $(id).disabled = !enabled);
     $("startTraining").disabled = !enabled || !state.prepared;
-    $("startTraining").textContent = state.online ? (state.running ? "训练进行中" : "开始真实训练") : "本地引擎未连接";
+    $("startTraining").textContent = state.online ? (state.running ? "训练进行中" : "开始训练") : "本地引擎未连接";
     $("trainingHint").textContent = state.online ?
         (state.prepared ? "画像已就绪；点击后调用本地 PyTorch 训练" : "请上传工作表或加载团队示例，先生成器件画像") :
         "公开页面只读；请在本地运行启动命令后开放上传与训练";
@@ -285,7 +285,7 @@ function acceptPrepared(prepared) {
     $("fileStatus").innerHTML = `<span class="status-dot"></span><div><strong>${escapeHtml(prepared.source_file)}</strong><p>${prepared.profile.source_metadata.device_count} 颗器件 · ${prepared.profile.dynamic_parameters.discrete_states_count} 态画像 · 训练尚未开始</p></div>`;
     $("profileTag").textContent = prepared.example ? "团队示例画像" : "新上传画像";
     renderProfile(prepared.measured, prepared.profile);
-    showMessage("画像解析完成。请确认曲线与参数，然后设置协议并启动真实训练。");
+    showMessage("画像解析完成。请确认曲线与参数，然后设置协议并启动训练。");
     setStep(2);
     setControls();
 }
