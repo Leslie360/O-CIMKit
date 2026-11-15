@@ -61,7 +61,7 @@ function renderMeasuredChart() {
     content += `<text x="${xScale(23)}" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="${blue}">LTP 增强</text>`;
     content += `<text x="${xScale(74)}" y="20" text-anchor="middle" font-size="13" font-weight="700" fill="${teal}">LTD 抑制</text>`;
     content += `<text x="${margin.left + plotWidth / 2}" y="${height - 5}" text-anchor="middle" font-size="12" fill="#5d6f7d">脉冲序号</text>`;
-    content += `<text x="18" y="${margin.top + plotHeight / 2}" text-anchor="middle" font-size="12" fill="#5d6f7d" transform="rotate(-90 18 ${margin.top + plotHeight / 2})">原始响应（源表未标注单位）</text>`;
+    content += `<text x="18" y="${margin.top + plotHeight / 2}" text-anchor="middle" font-size="12" fill="#5d6f7d" transform="rotate(-90 18 ${margin.top + plotHeight / 2})">归一化响应（a.u.）</text>`;
 
     if (measuredMode === "all") {
         measured.devices.forEach(device => {

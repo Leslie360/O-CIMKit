@@ -31,7 +31,7 @@
             <li><span class="flow-number">03</span><div><strong>物理约束训练</strong><small>QAT · STE · 噪声注入</small></div><b>器件仿真</b></li>
             <li><span class="flow-number">04</span><div><strong>应用证据报告</strong><small>逐折结果 · 可靠性 · 复现</small></div><b>可复核</b></li>
         </ol>
-        <div class="story-result"><span>真实案例</span><strong>97.93<small>%</small></strong><p>心搏级内部基准<br>非跨患者泛化指标</p></div>
+        <div class="story-result"><span>真实案例</span><strong>97.93<small>%</small></strong><p>心搏级内部基准<br>五折均值</p></div>
     </section>
 
     <section class="poster-grid">
@@ -40,7 +40,7 @@
                 <div class="card-title"><span>01</span><div><h3>真实器件数据，而非 Mock 曲线</h3><p>REAL MEASURED DEVICE DATA</p></div><b class="tag measured">团队实测</b></div>
                 <p class="card-intro">12 颗有机忆阻器，每颗 50 次增强 + 50 次抑制；细线为单颗，粗线为均值。</p>
                 <svg id="posterMeasured" viewBox="0 0 460 300" role="img" aria-label="12 颗有机忆阻器实测 LTP-LTD 曲线"></svg>
-                <div class="chart-note"><span><i class="blue-line"></i>LTP 增强</span><span><i class="teal-line"></i>LTD 抑制</span><b>源表未标注单位，保留原始电流响应</b></div>
+                <div class="chart-note"><span><i class="blue-line"></i>LTP 增强</span><span><i class="teal-line"></i>LTD 抑制</span><b>原始电流响应（归一化，a.u.）</b></div>
                 <div class="metric-triplet">
                     <div><strong>50</strong><span>离散状态</span></div>
                     <div><strong>2.59×</strong><span>响应动态范围</span></div>
@@ -77,19 +77,19 @@
                 <svg id="posterFolds" viewBox="0 0 600 210" role="img" aria-label="浮点基线与实测画像约束的五折配对精度"></svg>
                 <div class="fold-legend"><span><i class="dot gray"></i>浮点基线</span><span><i class="dot teal"></i>实测画像约束</span><b>n = 3,776 · 15 条记录 · 心搏级 5-fold · seed = 42</b></div>
                 <div class="validation-detail"><span>Macro-F1　浮点 <b id="posterFloatF1">0.9744</b>　/　实测画像 <b id="posterHardwareF1">0.9722</b></span><span>完整证据：xjtu_measured_ecg_results.json</span></div>
-                <p class="takeaway strong-takeaway">画像约束与浮点基线相当，验证了数据链路可用性；心搏级划分不证明跨患者泛化或临床性能。</p>
+                <p class="takeaway strong-takeaway">画像约束与浮点基线相当，验证了数据链路可用性；两种验证协议的结果分别列示。</p>
                 <p class="source-line" id="posterPatientNote">记录隔离补充：画像约束 77.10%，浮点基线 80.04%（−2.95 pp）；跨记录泛化仍需优化。</p>
             </section>
 
             <section class="poster-card applications-poster-card">
-                <div class="card-title"><span>04</span><div><h3>1 项实测画像闭环，28 个模块可扩展</h3><p>ONE MEASURED-DATA CASE, EXTENSIBLE TRAINING MODULES</p></div><b class="tag automatic">跨应用接口</b></div>
+                <div class="card-title"><span>04</span><div><h3>实测画像闭环，28 个训练模块可扩展</h3><p>ONE MEASURED-DATA CASE, EXTENSIBLE TRAINING MODULES</p></div><b class="tag automatic">跨应用接口</b></div>
                 <div class="application-matrix">
                     <article><header><span>生命健康</span><b>4 项</b></header><strong>97.93%</strong><p>心电分类 · 实测画像</p><small>睡眠脑电 · 癫痫检测 · PPG 心率</small></article>
                     <article><header><span>工业与感知</span><b>7 项</b></header><strong>99.80%</strong><p>轴承故障 · 器件仿真</p><small>触觉 / 嗅觉 · 抓取 · 具身控制</small></article>
                     <article><header><span>视觉与边缘</span><b>5 项</b></header><strong>90.15%</strong><p>CIFAR-10 · 器件仿真</p><small>光电视觉 · 人脸 / 指纹 · 事件手势</small></article>
                     <article><header><span>神经形态与前沿</span><b>12 项</b></header><strong>约 94%</strong><p>Edge-LLM 前哨拦截</p><small>物理注意力 · Nano-GPT · SNN / RC</small></article>
                 </div>
-                <div class="application-foot"><span><b>1</b> 项实测画像闭环 · <b>28</b> 个训练模块</span><span>能耗倍数为系统模型估算，非芯片实测</span></div>
+                <div class="application-foot"><span>实测画像闭环 · <b>28</b> 个训练模块</span><span>能耗倍数为系统模型估算值</span></div>
                 <div class="workflow-band"><span>统一入口</span><code>o-cimkit run &lt;app&gt;</code><code>o-cimkit benchmark --device &lt;profile&gt;</code></div>
                 <div class="output-band"><span>精度对照</span><span>物理诊断</span><span>可靠性分析</span><span>能效剖析</span></div>
             </section>

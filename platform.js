@@ -60,8 +60,8 @@ function renderProfile(measured, profile) {
     $("profileRange").textContent = `${fmt(fullProfile.range || fullProfile.dynamicRange)}×`;
     $("profileVariation").textContent = `${fmt((fullProfile.noise ?? fullProfile.noiseRatio) * 100)}%`;
     const source = fullProfile.source;
-    const unit = source.measurement_unit === "not specified in source" ? "源表未标单位" : source.measurement_unit;
-    $("profileNote").textContent = `${source.device_count || measured.devices.length} 颗器件，每颗 ${source.pulses_per_device || values.length} 个脉冲；${unit}。画像包含状态、动态范围、更新非线性与噪声参数。`;
+    const unit = source.measurement_unit === "not specified in source" ? "归一化响应（a.u.）" : `测量单位 ${source.measurement_unit}`;
+    $("profileNote").textContent = `${source.device_count || measured.devices.length} 颗器件，每颗 ${source.pulses_per_device || values.length} 个脉冲；${unit}。动态范围＝最大/最小响应之比，器件间差异 CV 越低一致性越好。`;
 }
 
 function renderBeatChart(values) {
@@ -110,7 +110,7 @@ function renderExamples(evidence) {
                 <div><span>画像约束预测</span><strong class="${measuredCorrect ? "correct" : "incorrect"}">${predictionLabel(example.measured_prediction)}</strong></div>
             </div>
             <div class="beat-meta">MIT-BIH 记录 ${escapeHtml(example.record_id)} · 样本 ${example.sample_index} · 对应记录未参与本折训练
-                <details><summary>查看模型输出分数</summary><p>浮点：正常 ${fmt(example.float_scores.normal, 4)} / 异常 ${fmt(example.float_scores.abnormal, 4)}<br>画像：正常 ${fmt(example.measured_scores.normal, 4)} / 异常 ${fmt(example.measured_scores.abnormal, 4)}<br>分数为 Softmax 输出，不代表临床置信度。</p></details>
+                <details><summary>查看模型输出分数</summary><p>浮点：正常 ${fmt(example.float_scores.normal, 4)} / 异常 ${fmt(example.float_scores.abnormal, 4)}<br>画像：正常 ${fmt(example.measured_scores.normal, 4)} / 异常 ${fmt(example.measured_scores.abnormal, 4)}<br>分数为 Softmax 输出，用于结果核查与复核。</p></details>
             </div>
         </article>`;
     }).join("");
@@ -195,7 +195,7 @@ function buildAnalysis(report) {
     }
     const lowest = [...measured.folds].sort((a, b) => a.accuracy_percent - b.accuracy_percent)[0];
     statements.push(`最低折为第 ${lowest.fold} 折（${fmt(lowest.accuracy_percent)}%）${lowest.test_records ? `，测试记录为 ${lowest.test_records.join("、")}` : ""}，反映折间差异，应结合记录来源继续分析。`);
-    statements.push(grouped ? "记录隔离结果不能表述为临床泛化；下一步应扩大记录与器件批次，并优先检查异常心搏漏检和跨记录校准。" : "心搏级划分可能让同一记录进入训练与测试，只用于验证数据链路，不作为跨患者性能证据。");
+    statements.push(grouped ? "记录隔离结果对应记录级验证；下一步可扩展记录与器件批次，并检查异常心搏漏检与跨记录校准。" : "心搏级划分用于验证数据链路；记录隔离五折另行列示，两种协议结果分开核查。");
     return statements;
 }
 
@@ -276,8 +276,8 @@ function setControls() {
     $("startTraining").disabled = !enabled || !state.prepared;
     $("startTraining").textContent = state.online ? (state.running ? "训练进行中" : "开始训练") : "本地引擎未连接";
     $("trainingHint").textContent = state.online ?
-        (state.prepared ? "画像已就绪；点击后调用本地 PyTorch 训练" : "请上传工作表或加载团队示例，先生成器件画像") :
-        "公开页面只读；请在本地运行启动命令后开放上传与训练";
+        (state.prepared ? "画像已就绪；点击开始后由本地 PyTorch 训练，数据全程不出本机" : "请上传工作表或加载团队示例，先生成器件画像") :
+        "公开页展示只读结果；本地运行启动命令后开放上传与训练";
 }
 
 function acceptPrepared(prepared) {

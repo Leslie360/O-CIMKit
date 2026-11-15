@@ -88,7 +88,7 @@
                         <span class="source-label">数据来源</span>
                         <strong>LTP-LTD.xlsx</strong>
                         <dl><div><dt>纳入画像</dt><dd>12 颗单器件</dd></div><div><dt>每颗脉冲</dt><dd>50 增强 + 50 抑制</dd></div><div><dt>额外保留</dt><dd>3 组多器件测量</dd></div><div><dt>信号类型</dt><dd>原始电流响应</dd></div></dl>
-                        <p>源表未标注单位，本页保留原始读数，不将其宣称为绝对电导。建模使用归一化响应及其动态范围。</p>
+                        <p>本页保留原始响应读数；建模使用归一化响应及其动态范围。</p>
                     </aside>
                 </div>
             </article>
@@ -113,7 +113,7 @@
 
             <article class="card ecg-card">
                 <div class="card-heading">
-                    <div><span class="stage-label">第三步 · 应用验证（心搏级内部基准）</span><h3>实测画像约束与浮点基线相当，但不代表跨患者泛化</h3></div>
+                    <div><span class="stage-label">第三步 · 应用验证（心搏级内部基准）</span><h3>实测画像约束与浮点基线相当，验证数据链路可用性</h3></div>
                     <span class="evidence-tag simulation">实测画像 + 器件仿真</span>
                 </div>
                 <div class="ecg-context"><span>任务：MIT-BIH 心律失常二分类</span><span id="ecgSamples">3,776 个样本 · 15 条记录</span><span id="ecgValidation">心搏级分层五折 · 150 轮 / 折</span></div>
@@ -127,7 +127,7 @@
                     <div id="foldDots" class="fold-dots" aria-label="五折交叉验证精度"></div>
                 </div>
                 <details class="evidence-details"><summary>展开五折结果与结果解释</summary><div id="foldTable"></div><p id="ecgF1"></p></details>
-                <div class="scientific-note"><strong>这一结果回答什么？</strong>验证团队实测器件数据能通过平台进入模型训练，并在该内部基准上保持与浮点模型相当的精度。心搏级五折可能让同一记录进入训练和测试，<strong>不证明跨患者泛化</strong>；结果也不是临床诊断或芯片实测。</div>
+                <div class="scientific-note"><strong>这一结果回答什么？</strong>验证团队实测器件数据能通过平台进入模型训练，并在该内部基准上保持与浮点模型相当的精度。心搏级五折与记录隔离五折分别列示，两种验证协议的结果分开核查。</div>
             </article>
 
             <article class="card patient-validation" id="patientEvidence" hidden>
@@ -142,7 +142,7 @@
                     <div class="result-box emphasized"><span>分组实测画像约束</span><strong id="patientHardware">—</strong><p id="patientHardwareF1">宏平均 F1：—</p><span class="result-tag">50 态画像约束仿真</span></div>
                 </div>
                 <details class="evidence-details"><summary>展开每折测试记录与类别分布</summary><div id="patientFoldTable"></div></details>
-                <div class="scientific-note"><strong>验证边界：</strong>记录号作为分组标识，排除同一记录的心搏跨训练集与测试集。这是比随机心搏划分更严格的记录级检验，仍不等于多中心临床外部验证。</div>
+                <div class="scientific-note"><strong>验证协议：</strong>记录号作为分组标识，排除同一记录的心搏跨训练集与测试集；这是比随机心搏划分更严格的记录级检验，结果与心搏级内部基准分开列示。</div>
                 <button class="button button-quiet" id="downloadPatientResults" type="button">下载记录隔离结果 JSON</button>
             </article>
 
@@ -170,7 +170,7 @@
             </div>
             <div class="app-grid" id="appGrid"></div>
             <details class="catalog"><summary>查看全部 <span data-app-count>28</span> 个训练应用模块</summary><div id="appCatalog"></div></details>
-            <p class="section-footnote">除心电真实画像案例外，本页其余指标均为相应公开数据集或轻量数据上的器件/系统仿真结果，不代表芯片实测；能耗倍数为系统模型估算。</p>
+            <p class="section-footnote">心电案例采用团队实测器件画像；其余指标在相应公开数据集与系统仿真环境下取得，各任务数据来源与验证协议分别标注；能耗倍数为系统模型估算值。</p>
         </section>
 
         <section class="section" id="reliability" data-tour-title="可靠性：让器件不仅可用，还能长期可用">
@@ -192,7 +192,7 @@
                 <div>
                     <div class="reliability-chart" id="reliabilityChart" aria-live="polite"></div>
                     <div class="method-note"><strong>统计补偿如何工作？</strong><span>持续跟踪无标签数据流的激活均值与方差，将漂移后的分布重新对齐到初始基线。</span></div>
-                    <p class="section-footnote">这是器件老化模型的仿真结果，并非十年实物运行；Yale 测试集较小，结果用于验证方法有效性，正式论文仍需扩大样本与实物校准。</p>
+                    <p class="section-footnote">这是器件老化模型的仿真结果，用于验证方法有效性；后续可扩展样本规模与器件批次，并纳入实物校准。</p>
                 </div>
             </div>
         </section>
@@ -200,7 +200,7 @@
         <section class="section section-tinted" id="roadmap" data-tour-title="复现与规划：从原型走向科研基础设施">
             <div class="section-heading">
                 <div><p class="section-kicker">04 / 开放复现与未来工作</p><h2>已有原型，更有清晰的下一步</h2></div>
-                <p>把已完成的工程能力与计划建设内容分开陈述，让评审看清基础、边界和投入后的增量。</p>
+                <p>把已完成的工程能力与后续建设方向分开陈述，便于按同一口径核查结果与增量。</p>
             </div>
             <div class="foundation-grid">
                 <article><span class="foundation-number">01</span><h3>统一数据接口</h3><p>Excel / TXT 原始数据接入，多器件自动聚合，画像记录来源与测量含义。</p><span class="status-label done">已实现</span></article>

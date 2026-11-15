@@ -66,6 +66,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-bottom: 16px; }
 .panel-heading > div { display: flex; align-items: center; gap: 9px; }
 .panel-heading h2 { font-size: 15px; line-height: 1.35; }
+.panel-sub { margin-top: 1px; color: var(--muted); font-size: 11px; font-weight: 400; line-height: 1.4; }
 .section-number { color: var(--green); font-size: 10px; font-weight: 800; }
 .tag { display: inline-flex; align-items: center; padding: 3px 7px; border-radius: 4px; font-size: 10px; font-weight: 700; white-space: nowrap; }
 .tag.neutral { background: #f0f3f5; color: var(--muted); }
