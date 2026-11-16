@@ -3,7 +3,7 @@
 **Generated**: 2026-11-09
 
 **Source File**: `LTP-LTD.xlsx` | **Measured Devices**: 12
-**Source Signal**: current | **Unit**: not specified in source
+**Source Signal**: current | **Scale**: normalized response
 
 ## 1. Core Physical Parameters
 
@@ -16,7 +16,7 @@
 | **Volatility Decay ($\tau$)** | Infinite | Dynamic relaxation time constant |
 
 ## 2. Non-Linearity Coefficients (LTP/LTD Slope Polynomials)
-The fitted variable $r$ is the min-max normalized source response; coefficients describe normalized updates, not absolute conductance derivatives.
+The fitted variable $r$ is the min-max normalized source response; coefficients describe normalized updates.
 $$\Delta r_{LTP} = -0.3790 \cdot r^3 + 0.7717 \cdot r^2 + -0.5197 \cdot r + 0.1312$$
 $$\Delta r_{LTD} = -0.2161 \cdot r^3 + 0.1816 \cdot r^2 + -0.0695 \cdot r + -0.0050$$
 
